@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Del & Esther</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Great+Vibes&family=Cinzel:wght@400;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="loading-bar" aria-hidden="true"></div>
+<button id="sound" aria-label="Couper la musique">🔊</button>
+<div id="fireflies" aria-hidden="true"></div>
+<div id="embers" aria-hidden="true"></div>
+
+<section id="scene-0" class="scene active">
+  <div class="envelope" onclick="openEnvelope()">
+    <div class="envelope__flap"></div>
+    <div class="envelope__seal">💌</div>
+  </div>
+  <p class="envelope-text">Ouvre cette enveloppe</p>
+  <p class="envelope-sub">Une histoire t'attend</p>
+</section>
+
+<section id="scene-1" class="scene">
+  <div class="fog" aria-hidden="true"></div>
+  <div class="content"><h1>Del & Esther</h1><p class="sub">Une histoire à découvrir</p></div>
+  <div class="gate" aria-hidden="true"><span></span><span></span></div>
+  <button id="start" class="btn">Ouvrir le portail</button>
+</section>
+
+<section id="scene-2" class="scene garden">
+  <img src="assets/photos/bebe.jpeg" alt="Del bébé" onerror="this.onerror=null;this.style.opacity='.25'">
+  <p>Il était une fois un petit garçon s'appelant Del</p>
+  <button class="btn next">Continuer</button>
+</section>
+
+<section id="scene-3" class="scene garden">
+  <img src="assets/photos/photo-au-micro.jpeg" alt="Del au micro" onerror="this.onerror=null;this.style.opacity='.25'">
+  <p class="beat1">C'est un garçon qui aimait rire, danser, s'amuser, et qui avait développé aussi l'amour du flow gospel…</p>
+  <p class="beat2">Mais ce soir-là, il découvrait un autre type d'amour.</p>
+  <button class="btn next late">Continuer</button>
+</section>
+
+
+
+
+<section id="scene-4" class="scene garden">
+  <div class="bloom" aria-hidden="true">
+    <b class="stem"></b>
+    <i style="--a:0deg"></i><i style="--a:36deg"></i><i style="--a:72deg"></i><i style="--a:108deg"></i><i style="--a:144deg"></i>
+    <i style="--a:180deg"></i><i style="--a:216deg"></i><i style="--a:252deg"></i><i style="--a:288deg"></i><i style="--a:324deg"></i>
+    <img src="assets/photos/1.jpeg" alt="Esther" onerror="this.onerror=null;this.style.opacity='.25'">
+  </div>
+  <p class="cap" id="s4-cap"></p>
+  <div class="duo-photos"><img src="assets/photos/1.jpeg" alt="Esther"><img src="assets/photos/photo-au-micro.jpeg" alt="Del"></div>
+  <button id="s4-next" class="btn late">Continuer</button>
+</section>
+
+
+
+<section id="scene-5" class="scene">
+  <div class="doors"><div class="porte g"></div><div class="porte d"></div></div>
+  <p class="over">Voyons voir comment Del perçoit cette soi-disant Esther…</p>
+  <button id="open-gallery" class="btn gold over">Ouvrir les portes de la galerie</button>
+</section>
+
+<section id="scene-6" class="scene">
+  <figure class="punch on"><div class="frame"><img src="assets/photos/2.jpeg" alt="" onerror="this.onerror=null;this.style.opacity='.25'"></div>
+    <figcaption><span class="plaque">Œuvre I</span><p>Son visage est plus magnifique que la Joconde.</p></figcaption></figure>
+  <figure class="punch"><div class="frame"><video src="assets/videos/A.mp4#t=0.1" muted loop playsinline preload="metadata"></video></div>
+    <figcaption><span class="plaque">Œuvre II</span><p>Le Louvre a ses chefs-d'œuvre. Moi, j'ai son sourire.</p></figcaption></figure>
+  <figure class="punch"><div class="frame"><video src="assets/videos/aa.mp4#t=0.1" muted loop playsinline preload="metadata"></video></div>
+    <figcaption><span class="plaque">Œuvre III</span><p>La tour Eiffel brille la nuit. Elle, elle brille tout le temps.</p></figcaption></figure>
+  <figure class="punch"><div class="frame"><video src="assets/videos/ab.mp4#t=0.1" muted loop playsinline preload="metadata"></video></div>
+    <figcaption><span class="plaque">Œuvre IV</span><p>Michel-Ange a sculpté le David. Dieu a pris son temps pour elle.</p></figcaption></figure>
+  <figure class="punch"><div class="frame"><video src="assets/videos/ac.mp4#t=0.1" muted loop playsinline preload="metadata"></video></div>
+    <figcaption><span class="plaque">Œuvre V</span><p>Aucun musée au monde n'est assez grand pour elle.</p></figcaption></figure>
+  <button id="next-punch" class="btn gold">Continuer</button>
+</section>
+
+
+<section id="scene-7" class="scene">
+  <div class="grid">
+    <div class="cell"><img src="assets/photos/2.jpeg" alt="" onerror="this.onerror=null;this.style.opacity='.25'"></div>
+    <div class="cell"><video src="assets/videos/B.mp4#t=0.1" muted playsinline preload="metadata"></video></div>
+    <div class="cell"><video src="assets/videos/bb.mp4#t=0.1" muted playsinline preload="metadata"></video></div>
+    <div class="cell"><video src="assets/videos/bc.mp4#t=0.1" muted playsinline preload="metadata"></video></div>
+    <div class="cell"><video src="assets/videos/C.mp4#t=0.1" muted playsinline preload="metadata"></video></div>
+    <div class="cell"><video src="assets/videos/cc.mp4#t=0.1" muted playsinline preload="metadata"></video></div>
+    <div class="cell"><video src="assets/videos/D.mp4#t=0.1" muted playsinline preload="metadata"></video></div>
+    <div class="cell"><video src="assets/videos/E.mp4#t=0.1" muted playsinline preload="metadata"></video></div>
+    <div class="cell"><video src="assets/videos/F.mp4#t=0.1" muted playsinline preload="metadata"></video></div>
+  </div>
+  <p class="hint">Touche un cadre pour l'agrandir</p>
+  <button class="btn gold next">Continuer</button>
+</section>
+
+
+<section id="scene-8" class="scene">
+  <div class="final">
+    <img src="assets/photos/2.jpeg" alt="Del" onerror="this.onerror=null;this.style.opacity='.25'">
+    <video src="assets/videos/G.mp4#t=0.1" muted loop playsinline preload="metadata"></video>
+  </div>
+  <h1>Del & Esther</h1>
+  <div style="display: flex; gap: 1rem; justify-content: center;">
+    <button class="btn gold next">Continuer</button>
+    <button id="restart" class="btn gold">Revoir</button>
+  </div>
+</section>
+
+
+<!-- Scène 9 : Lettre personnelle de Del à Esther -->
+<section id="scene-9" class="scene">
+  <h2>✦ UN MOT POUR TOI ✦</h2>
+  <p id="final-message"></p>
+  <p style="text-align: center; font-size: 0.9em;">
+    « ~✍🏽D£L£U£$£ 🧠🤷🏾‍♂️✨ »
+  </p>
+  <button class="btn gold" onclick="closeStory()">Relire l'Épopée</button>
+</section>
+
+
+<div id="modal">
+  <button id="close" aria-label="Fermer">×</button>
+  <div id="modal-content">
+    <div id="modal-media"></div>
+    <p id="modal-message"></p>
+  </div>
+</div>
+
+
+<audio id="audio-jardin" loop src="assets/audio/tes-une-etoile.mp3"></audio>
+<audio id="audio-musee" loop src="assets/audio/soza.mp3"></audio>
+<div id="closing-vignette" aria-hidden="true"></div>
+<script src="script.js"></script>
+</body>
+</html>
