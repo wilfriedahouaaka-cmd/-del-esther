@@ -20,8 +20,8 @@ const SELECTORS = {
   battantG: '.porte__battant--g',
   battantD: '.porte__battant--d',
   serrure: '#serrure',
-  scenePortail: '#portail',
-  sceneJardin: '#jardin'
+  scenePortail: '#ecran-portail',
+  sceneJardin: '#ecran-jardin-bebe'
 };
 
 /** État interne */

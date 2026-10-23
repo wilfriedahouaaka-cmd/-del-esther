@@ -41,17 +41,17 @@
 <button aria-label="Couper la musique" class="btn-son" id="btn-son" type="button">🔊</button>
 
 <!-- ============================================================
-     L'EXPÉRIENCE : 4 scènes empilées, dans l'ordre du parcours
+     L'EXPÉRIENCE : écrans successifs, un seul visible à la fois
      ============================================================ -->
 <main id="experience">
 
-  <!-- Scène 1 — LE PORTAIL : une arche fermée, au centre de l'écran -->
-  <section aria-label="Portail fermé" class="scene scene--portail" id="portail">
+  <!-- Écran 1 — LE PORTAIL : une arche fermée, au centre de l'écran -->
+  <section class="scene scene--portail" id="ecran-portail">
 
     <!-- Bloc supérieur : titre -->
     <div class="portail__haut">
-      <p class="surtitre">✦ Un lieu précieux ✦</p>
-      <h1 class="titre">Del &amp; Esther</h1>
+      <p class="surtitre apparition" data-delai="0">✦ Un lieu précieux ✦</p>
+      <h1 class="titre apparition" data-delai="0.2">Del &amp; Esther</h1>
     </div>
 
     <!-- L'arche : cadre de pierre + deux battants fermés + serrure -->
@@ -72,24 +72,21 @@
 
     <!-- Bloc inférieur : invitation discrète -->
     <div class="portail__bas">
-      <p class="texte">Derrière cette porte, il n'y a rien à chercher — c'est toi qui es invitée.</p>
-      <button class="porte__invite" id="btn-ouvrir" type="button">Ouvre la porte</button>
+      <p class="texte apparition" data-delai="0.4">Derrière cette porte, il n'y a rien à chercher — c'est toi qui es invitée.</p>
+      <button class="porte__invite apparition" id="btn-ouvrir" type="button" data-delai="0.6">Ouvre la porte</button>
     </div>
 
   </section>
 
-  <!-- Scène 2 — LE JARDIN : l'histoire de Del, en trois temps -->
-  <section aria-hidden="true" aria-label="Le jardin" class="scene scene--jardin" id="jardin">
-
+  <!-- Écran 2 — LE JARDIN : Del bébé -->
+  <section class="scene" id="ecran-jardin-bebe">
     <div class="conteneur scene-intro">
       <p class="surtitre apparition" data-delai="0">✦ Le jardin ✦</p>
       <h2 class="titre apparition" data-delai="0.2">Tu es entrée.</h2>
       <p class="texte apparition" data-delai="0.4">Autour de toi, les souvenirs vont éclore un à un.</p>
       <p class="indice apparition" data-delai="0.6"><span>Descends doucement ↓</span></p>
     </div>
-
     <div class="conteneur">
-
       <article class="bloc">
         <div class="bloc__media apparition">
           <img alt="Del bébé" loading="lazy" src="assets/photos/bebe.jpeg"/>
@@ -100,7 +97,16 @@
           <p>Il vivait une vie banale, sans savoir que quelqu'un, quelque part, grandissait aussi.</p>
         </div>
       </article>
+    </div>
+    <button class="btn-next apparition" id="btn-jardin-bebe-suivant" type="button" data-delai="1">Continuer</button>
+  </section>
 
+  <!-- Écran 3 — LE JARDIN : Del au micro (bouton tardif ~6 s) -->
+  <section class="scene" id="ecran-jardin-micro">
+    <div class="conteneur scene-intro">
+      <h2 class="titre apparition" data-delai="0">Le garçon</h2>
+    </div>
+    <div class="conteneur">
       <article class="bloc bloc--inverse">
         <div class="bloc__media apparition">
           <img alt="Del au micro" loading="lazy" src="assets/photos/photo-au-micro.jpeg"/>
@@ -111,23 +117,63 @@
           <p>Mais ce soir-là, il découvrait un autre type d'amour.</p>
         </div>
       </article>
-
     </div>
+    <button class="btn-next late" id="btn-jardin-micro-suivant" type="button">Continuer</button>
   </section>
 
-  <!-- Scène 3 — LE MUSÉE : comment Del la voit -->
-  <section aria-hidden="true" aria-label="Le musée" class="scene scene--musee" id="musee">
+  <!-- Écran 4 — RÉVÉLATION D'ESTHER : étoile qui bourgeonne, pétales, photo -->
+  <section class="scene" id="ecran-revelation">
+    <div class="conteneur scene-intro">
+      <h2 class="titre apparition" data-delai="0">Comment il la voit</h2>
+    </div>
+    <div class="conteneur">
+      <div aria-hidden="true" class="bloom">
+        <b class="stem"></b>
+        <i class="petale p1"></i>
+        <i class="petale p2"></i>
+        <i class="petale p3"></i>
+        <i class="petale p4"></i>
+        <i class="petale p5"></i>
+        <i class="petale p6"></i>
+        <i class="petale p7"></i>
+        <i class="petale p8"></i>
+        <i class="petale p9"></i>
+        <i class="petale p10"></i>
+        <img alt="Esther" class="photo-esther" loading="lazy" src="assets/photos/1.jpeg"/>
+      </div>
+      <p class="cap" id="s4-cap"></p>
+      <div class="duo-photos">
+        <img alt="Esther" class="photo-duo" loading="lazy" src="assets/photos/1.jpeg"/>
+        <img alt="Del" class="photo-duo" loading="lazy" src="assets/photos/photo-au-micro.jpeg"/>
+      </div>
+    </div>
+    <button class="btn-next late" id="btn-revelation-suivant" type="button">Continuer</button>
+  </section>
 
+  <!-- Écran 5 — PORTES DE LA GALERIE -->
+  <section class="scene" id="ecran-portes-galerie">
     <div class="conteneur scene-intro">
       <p class="surtitre apparition" data-delai="0">✦ Le musée ✦</p>
       <h2 class="titre apparition" data-delai="0.2">Comment il la voit</h2>
-      <p class="texte apparition" data-delai="0.4">Voyons voir comment Del perçoit cette soi-disant Esther…</p>
     </div>
+    <div class="conteneur">
+      <p class="texte apparition" data-delai="0.4">Voyons voir comment Del perçoit cette soi-disant Esther…</p>
+      <div class="doors">
+        <div class="porte g"></div>
+        <div class="porte d"></div>
+      </div>
+    </div>
+    <button class="btn-next apparition" id="btn-open-gallery" type="button" data-delai="0.8">Ouvrir les portes de la galerie</button>
+  </section>
 
+  <!-- Écran 6 — GALERIE DES ŒUVRES (une à la fois) -->
+  <section class="scene" id="ecran-galerie">
+    <div class="conteneur scene-intro">
+      <h2 class="titre apparition" data-delai="0">Le musée</h2>
+    </div>
     <div class="conteneur oeuvres">
-
-      <figure class="oeuvre apparition">
-        <div class="oeuvre__cadre">
+      <figure class="oeuvre punch on" id="oeuvre-1">
+        <div class="oeuvre__cadre frame">
           <img alt="Esther" loading="lazy" src="assets/photos/1.jpeg"/>
         </div>
         <figcaption>
@@ -135,31 +181,51 @@
           <p>Son visage est plus magnifique que la Joconde.</p>
         </figcaption>
       </figure>
-
-      <figure class="oeuvre apparition" data-delai="0.15">
-        <div class="oeuvre__cadre">
-          <video loop="" muted="" playsinline="" preload="metadata" src="assets/videos/ax.mp4#t=0.1"></video>
+      <figure class="oeuvre punch" id="oeuvre-2">
+        <div class="oeuvre__cadre frame shot-canvas">
+          <img alt="Esther" loading="lazy" src="assets/photos/1.jpeg"/>
         </div>
         <figcaption>
           <span class="plaque">Œuvre II</span>
-          <p>La tour Eiffel brille la nuit. Elle, elle brille tout le temps.</p>
+          <p>Le Louvre a ses chefs-d'œuvre. Moi, j'ai son sourire.</p>
         </figcaption>
       </figure>
-
-      <figure class="oeuvre apparition" data-delai="0.3">
-        <div class="oeuvre__cadre">
-          <video loop="" muted="" playsinline="" preload="metadata" src="assets/videos/abz.mp4#t=0.1"></video>
+      <figure class="oeuvre punch" id="oeuvre-3">
+        <div class="oeuvre__cadre frame">
+          <video loop="" muted="" playsinline="" preload="metadata" src="assets/videos/ax.mp4#t=0.1"></video>
         </div>
         <figcaption>
           <span class="plaque">Œuvre III</span>
+          <p>La tour Eiffel brille la nuit. Elle, elle brille tout le temps.</p>
+        </figcaption>
+      </figure>
+      <figure class="oeuvre punch" id="oeuvre-4">
+        <div class="oeuvre__cadre frame">
+          <video loop="" muted="" playsinline="" preload="metadata" src="assets/videos/ab.mp4#t=0.1"></video>
+        </div>
+        <figcaption>
+          <span class="plaque">Œuvre IV</span>
           <p>Michel-Ange a sculpté le David. Dieu a pris son temps pour elle.</p>
         </figcaption>
       </figure>
-
+      <figure class="oeuvre punch" id="oeuvre-5">
+        <div class="oeuvre__cadre frame">
+          <video loop="" muted="" playsinline="" preload="metadata" src="assets/videos/ac.mp4#t=0.1"></video>
+        </div>
+        <figcaption>
+          <span class="plaque">Œuvre V</span>
+          <p>Aucun musée au monde n'est assez grand pour elle.</p>
+        </figcaption>
+      </figure>
     </div>
+    <button class="btn-next" id="btn-next-punch" type="button">Continuer</button>
+  </section>
 
-    <!-- Le mur : toutes les autres vidéos du dossier, en aperçu léger.
-         La vidéo ne se charge qu'au clic (voir js/modules/visionneuse.js). -->
+  <!-- Écran 7 — MUR DE CADRES (vignettes) -->
+  <section class="scene" id="ecran-mur">
+    <div class="conteneur scene-intro">
+      <h2 class="titre apparition" data-delai="0">Le musée</h2>
+    </div>
     <div class="conteneur mur">
       <p class="texte apparition">Choisis une œuvre pour la regarder de plus près.</p>
       <div class="mur__grille">
@@ -276,17 +342,16 @@
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
       </div>
+      <button class="btn-next" id="btn-mur-suivant" type="button">Continuer</button>
     </div>
   </section>
 
-  <!-- Scène 4 — LA FINALE : le duo -->
-  <section aria-hidden="true" aria-label="La finale" class="scene scene--finale" id="finale">
-
+  <!-- Écran 8 — LA FINALE : le duo -->
+  <section class="scene" id="ecran-finale">
     <div class="conteneur scene-intro">
       <p class="surtitre apparition" data-delai="0">✦ Le dernier tableau ✦</p>
       <h2 class="titre apparition" data-delai="0.2">Del &amp; Esther</h2>
     </div>
-
     <div class="duo apparition" data-delai="0.4">
       <figure class="oeuvre oeuvre--duo">
         <div class="oeuvre__cadre">
@@ -299,16 +364,13 @@
         </div>
       </figure>
     </div>
-
     <div class="conteneur">
-      <!-- Message final : un <p data-machine> par ligne, écrit lettre par lettre.
-           Pour allonger le message de Del, ajouter d'autres paragraphes ici. -->
+      <!-- Message final : un <p data-machine> par ligne, écrit lettre par lettre. -->
       <div class="message-final" id="message-final">
         <p class="message-final__ligne" data-machine><span class="message-final__plein">Si chaque rencontre était un tableau, celle-là serait la seule accrochée à la lumière.</span><span aria-hidden="true" class="message-final__frappe"></span></p>
       </div>
       <p class="signature">— Del</p>
     </div>
-
   </section>
 
 </main>

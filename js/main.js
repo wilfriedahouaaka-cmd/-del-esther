@@ -7,8 +7,8 @@
      - transitions protégées par withLock() (à partir de la tâche 3)
    ===================================================================== */
 
+import { initScenes, go, prochain } from './modules/scenes.js';
 import { initPortail } from './modules/portal.js';
-import { entrerDansLeJardin } from './modules/jardin.js';
 import { initLucioles, initTon } from './modules/ambient.js';
 import { initApparitions } from './modules/reveal.js';
 import { initMedias } from './modules/medias.js';
@@ -73,11 +73,12 @@ if (musique && btnSon) {
    --------------------------------------------------------------------- */
 /* Quand la porte est entièrement ouverte :
    1. On lance la musique (premier geste utilisateur = clic sur le bouton)
-   2. On enchaîne vers le jardin (scroll + ambiance) */
+   2. On bascule sur l'écran suivant via go(1) */
+initScenes();
 initPortail({
   onOuvert: () => {
     demarrerMusique();
-    entrerDansLeJardin();
+    go(1);
   }
 });
 
@@ -98,6 +99,13 @@ initVisionneuse({ musique, musiqueCoupee: () => coupe });
 
 /* Le message final s'écrit lettre par lettre */
 initMessageFinal();
+
+/* Boutons "Continuer" de chaque écran : passent à l'écran suivant */
+document.querySelectorAll('.btn-next').forEach((bouton) => {
+  bouton.addEventListener('click', () => {
+    prochain();
+  });
+});
 
 /* ---------------------------------------------------------------------
    3. Fin du parcours de démarrage — le site est complet (tâches 1 à 6)

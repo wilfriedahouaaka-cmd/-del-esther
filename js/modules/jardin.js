@@ -21,7 +21,7 @@ const verrouTransition = { locked: false };
  * @param {Function} onComplete
  */
 function scrollerVersJardin(onComplete) {
-  const jardin = document.querySelector('#jardin');
+  const jardin = document.querySelector('#ecran-jardin-bebe');
   if (!jardin) { onComplete?.(); return; }
 
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;

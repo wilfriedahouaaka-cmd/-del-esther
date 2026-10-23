@@ -781,3 +781,271 @@ body:has(dialog[open]) { overflow: hidden; }
   .vignette img { transition: transform 0.7s var(--ease-doux); }
   .vignette:hover img { transform: scale(1.05); }
 }
+
+/* ============================================================
+     ÉCRANS SUCCESSIFS — un seul visible à la fois
+     ============================================================ */
+.scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.96) translateY(12px);
+  transition:
+    opacity 0.85s cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 0.85s cubic-bezier(0.2, 0.8, 0.2, 1),
+    visibility 0.85s;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+}
+.scene::-webkit-scrollbar { display: none; }
+
+.scene.active {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1) translateY(0);
+}
+
+/* Quand un écran est inactif, ses contenus .apparition ne doivent pas
+   jouer leur animation d'apparition avant d'être visibles. */
+.scene:not(.active) .apparition {
+  opacity: 0;
+  transform: translateY(30px) scale(0.98);
+  filter: blur(8px);
+}
+
+/* ============================================================
+     BOUTONS "CONTINUER" DES ÉCRANS
+     ============================================================ */
+.btn-next {
+  font-family: var(--f-titre);
+  font-size: var(--fs-sous-titre);
+  letter-spacing: 0.08em;
+  min-height: 48px;
+  min-width: 165px;
+  padding: 0.8em 2.2em;
+  color: var(--creme);
+  background: rgba(201, 162, 39, 0.16);
+  border: 1.5px solid var(--or);
+  border-radius: 999px;
+  cursor: pointer;
+  position: relative;
+  z-index: 10;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), inset 0 0 15px rgba(201, 162, 39, 0.25);
+  transition: all 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: var(--sp-4);
+}
+.btn-next:hover, .btn-next:focus-visible {
+  background: rgba(201, 162, 39, 0.35);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.45), inset 0 0 20px rgba(201, 162, 39, 0.45);
+  transform: translateY(-2px) scale(1.03);
+}
+.btn-next:active { transform: translateY(1px) scale(0.97); }
+
+/* Bouton "tardif" : caché jusqu'à ce qu'il soit activé par JS */
+.btn-next.late {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ============================================================
+     RÉVÉLATION D'ESTHER (écran 4)
+     ============================================================ */
+.bloom {
+  position: relative;
+  width: min(74vw, 295px);
+  aspect-ratio: 1;
+  margin: 0.8rem 0;
+}
+.bloom .stem {
+  position: absolute;
+  left: 50%;
+  bottom: 50%;
+  width: 4px;
+  height: 0;
+  margin-left: -2px;
+  background: linear-gradient(#fff4c2, rgba(255, 244, 194, 0.2));
+  border-radius: 2px;
+  z-index: 1;
+  transition: height 1.4s ease, opacity 0.6s;
+}
+.bloomed .stem { height: 26%; opacity: 0; }
+
+.bloom .petale {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 10%;
+  height: 52%;
+  margin-left: -5%;
+  background: linear-gradient(#fff5c4, rgba(201, 162, 39, 0.2));
+  border-radius: 50% 50% 50% 50% / 80% 80% 20% 20%;
+  transform-origin: 50% 0;
+  transform: rotate(var(--a)) scale(0);
+  transition: transform 1.6s cubic-bezier(0.2, 0.9, 0.3, 1.3);
+  box-shadow: 0 0 18px rgba(255, 230, 150, 0.7);
+}
+.bloomed .petale { transform: rotate(var(--a)) scale(1); }
+
+.bloom::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  background: #ffe9a0;
+  box-shadow: 0 0 22px 8px rgba(255, 230, 150, 0.9);
+  z-index: 2;
+  transition: opacity 0.8s, transform 0.8s;
+}
+.bloomed .bloom::before { opacity: 0; transform: scale(0.4); }
+
+.bloom .photo-esther {
+  position: absolute;
+  inset: 16%;
+  width: 68%;
+  height: 68%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid var(--or);
+  box-shadow: 0 0 50px rgba(255, 230, 150, 0.75);
+  clip-path: circle(0);
+  cursor: pointer;
+  transition: clip-path 1.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.8s;
+}
+.bloomed .bloom .photo-esther { clip-path: circle(50%); }
+
+#s4-cap {
+  font-family: var(--f-manuscrit);
+  min-height: 3.8em;
+  max-width: 27rem;
+  font-style: normal;
+  font-size: clamp(1.4rem, 3.8vw, 1.9rem);
+  color: var(--or-clair);
+  line-height: 1.48;
+  text-shadow: 0 0 18px rgba(232, 207, 143, 0.75);
+  margin-top: var(--sp-3);
+}
+
+.duo-photos {
+  display: none;
+  gap: clamp(0.8rem, 3vw, 1.4rem);
+  align-items: center;
+  justify-content: center;
+  margin: 1rem 0;
+}
+.bloomed .duo-photos { display: flex; }
+.duo-photos img {
+  width: min(42vw, 220px);
+  aspect-ratio: 3/4;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 2.5px solid var(--or);
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 230, 150, 0.45);
+  cursor: pointer;
+}
+
+/* Angles des pétales (évite style="" dans le HTML, conforme à la CSP) */
+.petale.p1 { --a: 0deg; }
+.petale.p2 { --a: 36deg; }
+.petale.p3 { --a: 72deg; }
+.petale.p4 { --a: 108deg; }
+.petale.p5 { --a: 144deg; }
+.petale.p6 { --a: 180deg; }
+.petale.p7 { --a: 216deg; }
+.petale.p8 { --a: 252deg; }
+.petale.p9 { --a: 288deg; }
+.petale.p10 { --a: 324deg; }
+
+/* ============================================================
+     PORTES DE LA GALERIE (écran 5)
+     ============================================================ */
+.doors {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  perspective: 1200px;
+  z-index: 1;
+}
+.doors .porte {
+  width: 50%;
+  background: linear-gradient(90deg, #2b1129, #c4992e 50%, #2b1129);
+  background-size: 40px 100%;
+  border: 2px solid var(--or);
+  box-shadow: inset 0 0 60px rgba(0, 0, 0, 0.9);
+  transition: transform 1.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+.doors .porte.g { transform-origin: left center; }
+.doors .porte.d { transform-origin: right center; }
+.doors-ouvert .porte.g { transform: rotateY(-112deg); }
+.doors-ouvert .porte.d { transform: rotateY(112deg); }
+
+/* ============================================================
+     GALERIE DES ŒUVRES (écran 6) — une œuvre à la fois
+     ============================================================ */
+.oeuvres .punch {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+.oeuvres .punch.on { display: flex; }
+.frame {
+  width: min(85vw, 345px);
+  border: 10px double var(--or);
+  outline: 2px solid rgba(232, 207, 143, 0.5);
+  outline-offset: -6px;
+  background: #09050d;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 35px rgba(201, 162, 39, 0.4);
+  border-radius: 4px;
+}
+.frame img,
+.frame video {
+  display: block;
+  width: 100%;
+  height: min(46svh, 390px);
+  object-fit: cover;
+  cursor: pointer;
+}
+.shot-canvas img { object-position: top; }
+
+/* ============================================================
+     MUR DE CADRES (écran 7) — cellules en cascade
+     ============================================================ */
+.mur__grille .cellule {
+  aspect-ratio: 1;
+  border: 2px solid var(--or);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(242, 233, 216, 0.08);
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.7s, transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+}
+.mur__grille .cellule.visible {
+  opacity: 1;
+  transform: none;
+}
+.mur__grille .cellule:active { transform: scale(0.94); border-color: #fff; }
+.mur__grille .cellule img,
+.mur__grille .cellule video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: auto;
+}
