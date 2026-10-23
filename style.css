@@ -1,0 +1,783 @@
+/* =====================================================================
+   Del & Esther — Le Jardin Caché
+   ---------------------------------------------------------------------
+   1. VARIABLES (design system)   4. SCÈNES
+   2. RÉINITIALISATION            5. ÉLÉMENTS DE BASE
+   3. DÉCOR                       6. ACCESSIBILITÉ
+
+   ⚠️ À cette étape : AUCUNE animation (pas de @keyframes, pas de
+   transition). Elles arrivent à la tâche 3.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   1. VARIABLES — palette « jardin secret nocturne »
+   Sombre, profond, avec des points de lumière douce (crème et or sourd).
+   --------------------------------------------------------------------- */
+:root {
+  /* Couleurs */
+  --nuit:          #06080a;   /* noir profond, fond de base */
+  --nuit-pourpre:    #0d0812;   /* violet très sombre pour le portail */
+  --pourpre-profond: #1a0b2e;   /* pourpre mystique */
+  --nuit-verte:    #08120e;   /* noir tiré sur le vert */
+  --vert-profond:  #0d2119;   /* vert très sombre, masse du jardin */
+  --vert-mousse:   #16382a;   /* vert moyen, feuillage dans l'ombre */
+  --vert-lueur:    #8fbf6f;   /* vert clair, la seule couleur « vivante » */
+  --creme:         #f2e9d8;   /* beige/crème, texte principal */
+  --creme-sourde:  rgba(242, 233, 216, 0.72);  /* texte secondaire */
+  --or:            #c9a227;   /* or sourd, filets et bordures */
+  --or-clair:      #e8cf8f;   /* or clair, lueurs */
+  --brume:         rgba(242, 233, 216, 0.08);  /* voiles, séparateurs */
+
+  /* Typographie */
+  --f-titre:    'Cinzel', serif;                 /* titres : solennel, « musée » */
+  --f-texte:    'Cormorant Garamond', serif;     /* texte : doux, contemplatif */
+  --f-manuscrit:'Great Vibes', cursive;          /* signature, mots intimes */
+
+  --fs-titre:     clamp(2rem, 6vw, 3.4rem);
+  --fs-sous-titre:clamp(1.05rem, 2.6vw, 1.35rem);
+  --fs-texte:     clamp(1rem, 2.2vw, 1.2rem);
+  --fs-petit:     0.85rem;
+
+  /* Espacements (rythme vertical, généreux : l'air fait partie du design) */
+  --sp-1: 0.5rem;
+  --sp-2: 1rem;
+  --sp-3: 1.6rem;
+  --sp-4: 2.6rem;
+  --sp-5: 4rem;
+
+  /* Mise en page */
+  --largeur-max: 72rem;
+  --largeur-texte: 34rem;
+  --rayon: 14px;
+
+  /* Courbes et durées (définies maintenant, utilisées à partir de la tâche 3) */
+  --ease-doux:   cubic-bezier(0.22, 1, 0.36, 1);  /* sortie en douceur, « cinématique » */
+  --dur-rapide:  0.35s;
+  --dur-lent:    1.6s;
+}
+
+/* ---------------------------------------------------------------------
+   2. RÉINITIALISATION
+   --------------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;          /* défilement doux, remplacé par Lenis à la tâche 4 */
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  background: var(--nuit);
+  color: var(--creme);
+  font-family: var(--f-texte);
+  font-size: var(--fs-texte);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+img, video { max-width: 100%; display: block; }
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+
+/* ---------------------------------------------------------------------
+   3. DÉCOR — deux voiles fixes derrière tout le contenu (statique)
+   --------------------------------------------------------------------- */
+.fond {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Nuit : un dégradé radial très sombre, plus clair au centre bas */
+.fond__nuit {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 78%, rgba(13, 33, 25, 0.65), transparent 70%),
+    radial-gradient(ellipse 45% 40% at 22% 18%, rgba(22, 56, 42, 0.35), transparent 75%),
+    linear-gradient(180deg, var(--nuit) 0%, var(--nuit-verte) 55%, var(--nuit) 100%);
+  filter: contrast(1.1);
+}
+
+/* Lueur : une clarté discrète, comme une lune derrière les feuilles */
+.fond__lueur {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 38%, rgba(232, 207, 143, 0.12), transparent 60%);
+  mix-blend-mode: screen;
+}
+
+/* Conteneur des lucioles (rempli en JS, tâche 4) */
+.lucioles {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  filter: blur(0.5px);
+}
+
+/* ---------------------------------------------------------------------
+   4. SCÈNES — chaque scène occupe au moins un écran
+   --------------------------------------------------------------------- */
+#experience { position: relative; z-index: 2; }
+
+.scene {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-4) var(--sp-2);
+}
+
+.conteneur {
+  width: 100%;
+  max-width: var(--largeur-max);
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------------
+   5. ÉLÉMENTS DE BASE — typographie et boutons
+   --------------------------------------------------------------------- */
+.titre {
+  font-family: var(--f-titre);
+  font-size: var(--fs-titre);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  margin: 0 0 var(--sp-2);
+  color: var(--creme);
+}
+
+.sous-titre {
+  font-family: var(--f-texte);
+  font-size: var(--fs-sous-titre);
+  font-style: italic;
+  color: var(--or-clair);
+  margin: 0 0 var(--sp-3);
+}
+
+.texte {
+  max-width: var(--largeur-texte);
+  margin: 0 auto;
+  color: var(--creme-sourde);
+}
+
+/* Bouton de la musique : toujours visible, très discret */
+.btn-son {
+  position: fixed;
+  top: calc(var(--sp-2) + env(safe-area-inset-top));
+  right: calc(var(--sp-2) + env(safe-area-inset-right));
+  z-index: 50;
+  width: 44px;              /* cible tactile minimale confortable */
+  height: 44px;
+  font-size: 1.1rem;
+  opacity: 0.75;
+}
+
+.btn-son:hover { opacity: 1; }
+.btn-son:focus-visible { outline: 1px solid var(--or); outline-offset: 3px; }
+
+/* ---------------------------------------------------------------------
+   6. ACCESSIBITÉ
+   --------------------------------------------------------------------- */
+/* Visible au lecteur d'écran, invisible à l'œil */
+.visuellement-cache {
+  position: absolute;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Focus clavier cohérent partout */
+:focus-visible { outline: 1px solid var(--or); outline-offset: 3px; }
+
+/* Respect de la préférence système : toutes les animations et transitions
+   sont neutralisées d'un seul bloc. Les états (classe .ouverte, etc.)
+   sont alors appliqués immédiatement, sans mouvement. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+}
+
+/* ---------------------------------------------------------------------
+   7. ÉCRAN D'ENTRÉE — la porte fermée (tâche 2)
+   Tout est statique ici : les mouvements arrivent à la tâche 3.
+   --------------------------------------------------------------------- */
+.scene--portail {
+  gap: var(--sp-3);
+  text-align: center;
+  background: radial-gradient(circle at center, var(--pourpre-profond) 0%, var(--nuit-pourpre) 100%);
+}
+
+.portail__haut, .portail__bas {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.portail__haut .titre {
+  margin: 0;
+  text-shadow: 0 0 28px rgba(232, 207, 143, 0.22);   /* halo statique, très doux */
+}
+
+.portail__bas .texte { margin: 0; font-style: italic; }
+
+/* L'arche : cadre de pierre sombre, sommet arrondi */
+.portail__3d { perspective: 1100px; }   /* base de la future ouverture 3D */
+
+.arche {
+  position: relative;
+  width: clamp(190px, 56vw, 300px);
+  height: clamp(270px, 50svh, 430px);
+  padding: 10px;
+  background: linear-gradient(180deg, #1a122e, #0d0812);
+  border: 2px solid var(--or);
+  /* haut en demi-cercle = arche */
+  border-radius: 50% 50% 10px 10px / 38% 38% 4px 4px;
+  box-shadow:
+    inset 0 0 40px rgba(0, 0, 0, 0.85),
+    0 30px 60px rgba(0, 0, 0, 0.7),
+    0 0 50px rgba(201, 162, 39, 0.15);
+}
+
+/* Intérieur de l'arche : obscurité, les battants viendront s'y poser */
+.arche__dedans {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  background: radial-gradient(ellipse at 50% 15%, #0d1a14, #05080a 78%);
+  border-radius: 48% 48% 6px 6px / 37% 37% 3px 3px;
+}
+
+/* Les deux battants : bois très sombre, planches verticales, filet d'or */
+.porte {
+  position: relative;
+  flex: 1;
+  display: flex;
+}
+
+.porte__battant {
+  width: 50%;
+  height: 100%;
+  background:
+    repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.28) 0 2px, transparent 2px 15px),
+    linear-gradient(180deg, #17251d 0%, #101b15 55%, #0a130f 100%);
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.7);
+}
+
+/* Bande de fer forgé sur chaque battant */
+.porte__battant::before {
+  content: '';
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 30%;
+  height: 6px;
+  background: linear-gradient(180deg, #2a3a30, #0f1813);
+  border: 1px solid rgba(201, 162, 39, 0.22);
+  border-radius: 3px;
+}
+
+/* Le filet de lumière qui passe entre les deux battants fermés :
+   le seul indice qu'un lieu existe derrière */
+.porte__fente {
+  position: absolute;
+  left: 50%;
+  top: 9%;
+  bottom: 9%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, transparent, rgba(232, 207, 143, 0.8), transparent);
+  box-shadow: 0 0 12px rgba(232, 207, 143, 0.55);
+}
+
+/* La serrure : médaillon doré avec trou de serrure, posé sur la fente */
+.porte__serrure {
+  position: absolute;
+  left: 50%;
+  top: 55%;
+  transform: translate(-50%, -50%);
+  width: clamp(36px, 9vw, 50px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--or-clair), var(--or) 62%, #7d6216);
+  box-shadow: 0 0 35px rgba(232, 207, 143, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.35);
+  z-index: 2;
+}
+
+/* Trou de serrure (cercle) */
+.porte__serrure::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 32%;
+  transform: translateX(-50%);
+  width: 24%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #120e07;
+}
+
+/* Trou de serrure (tige) */
+.porte__serrure::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  transform: translateX(-50%);
+  width: 12%;
+  height: 24%;
+  background: #120e07;
+  border-radius: 0 0 3px 3px;
+}
+
+/* L'invitation : un mot discret, souligné d'or, sous la porte */
+.porte__invite {
+  font-family: var(--f-texte);
+  font-style: italic;
+  font-size: var(--fs-sous-titre);
+  color: var(--or-clair);
+  letter-spacing: 0.04em;
+  padding: var(--sp-1) var(--sp-2);
+  border: 1px solid rgba(201, 162, 39, 0.3);
+  border-radius: 20px;
+  background: rgba(201, 162, 39, 0.05);
+  transition: all 0.4s var(--ease-doux);
+}
+.porte__invite:hover {
+  background: rgba(201, 162, 39, 0.15);
+  border-color: var(--or-clair);
+  box-shadow: 0 0 15px rgba(201, 162, 39, 0.2);
+}
+
+/* Petits écrans courts : on resserre la scène pour que tout tienne */
+@media (max-height: 640px) {
+  .scene--portail { gap: var(--sp-2); }
+  .arche { height: clamp(220px, 42svh, 320px); }
+}
+
+/* ---------------------------------------------------------------------
+   8. OUVERTURE 3D DE LA PORTE (tâche 3)
+   Le mouvement est produit par GSAP (js/modules/portal.js) ; les classes
+   `.ouverte` ci-dessous servent de repli quand GSAP n'est pas disponible,
+   et d'état immédiat pour prefers-reduced-motion.
+   --------------------------------------------------------------------- */
+
+/* La perspective est posée sur la porte elle-même : ses deux enfants
+   (les battants) deviennent de vrais plans 3D qui pivotent sur leurs gonds. */
+.porte {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+/* Gonds : chaque battant tourne autour de son bord extérieur */
+.porte__battant {
+  position: relative;
+  z-index: 1;
+  backface-visibility: hidden;     /* pas de dos « retourné » visible */
+}
+.porte__battant--g { transform-origin: left center; }
+.porte__battant--d { transform-origin: right center; }
+
+/* La lumière du jardin, cachée derrière les battants fermés */
+.porte__lueur {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0;
+  transform: scale(0.7);
+  background: radial-gradient(ellipse at 50% 45%,
+    rgba(232, 207, 143, 0.6),
+    rgba(143, 191, 111, 0.28) 45%,
+    rgba(6, 8, 10, 0.9) 88%);
+}
+
+/* Repli sans GSAP : la classe .ouverte déclenche les mêmes mouvements */
+.porte.ouverte .porte__serrure {
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.2);
+  transition: opacity 0.5s, transform 0.5s;
+}
+.porte.ouverte .porte__battant--g {
+  transform: rotateY(-108deg);
+  transition: transform 2.2s var(--ease-doux);
+}
+.porte.ouverte .porte__battant--d {
+  transform: rotateY(108deg);
+  transition: transform 2.2s var(--ease-doux);
+}
+.porte.ouverte .porte__lueur {
+  opacity: 1;
+  transform: scale(1.12);
+  transition: opacity 1.8s 0.35s, transform 1.8s 0.35s;
+}
+.porte.ouverte ~ .portail__bas .porte__invite {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s;
+}
+
+/* ---------------------------------------------------------------------
+   9. LA TRAVERSÉE — entrer dans le jardin (tâche 4)
+   --------------------------------------------------------------------- */
+
+/* Tant qu'on est devant la porte, la page ne défile pas :
+   le parcours commence à l'intérieur. */
+body.portail-bloque { overflow: hidden; }
+
+/* Traversée sans GSAP : la scène entière grossit vers la caméra */
+.scene--portail.traverse {
+  transform: scale(3.2);
+  opacity: 0;
+  transition: transform 2.2s var(--ease-doux), opacity 1.1s 0.9s ease;
+}
+
+/* Une fois dans le jardin, la scène du portail n'existe plus à l'écran */
+body.dans-le-jardin .scene--portail { visibility: hidden; }
+
+/* La lumière du jardin s'éveille dans le décor, en douceur */
+.fond__lueur {
+  opacity: 0.55;
+  transition: opacity 2.5s var(--ease-doux);
+}
+body.dans-le-jardin .fond__lueur { opacity: 1; }
+
+/* Les lucioles apparaissent en fondu à l'arrivée */
+.lucioles {
+  opacity: 0;
+  transition: opacity 2.2s var(--ease-doux);
+}
+body.dans-le-jardin .lucioles { opacity: 1; }
+
+/* Chaque luciole : un point de lumière qui dérive et palpite */
+@keyframes vacille {
+  0%   { transform: translate(0, 0) scale(0.8); opacity: 0.15; }
+  35%  { opacity: 0.8; }
+  50%  { transform: translate(15px, -25px) scale(1.1); opacity: 0.5; }
+  85%  { opacity: 0.8; }
+  100% { transform: translate(-15px, -45px) scale(0.8); opacity: 0.15; }
+}
+
+.luciole {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(232, 207, 143, 0.95),
+    rgba(201, 162, 39, 0.4) 50%,
+    transparent 70%);
+  animation-name: vacille;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  will-change: transform, opacity;
+}
+
+/* Apparition progressive : un élément entre lorsqu'il arrive à l'écran.
+   Le décalage (--delai) s'écrit dans le HTML, élément par élément. */
+.apparition {
+  opacity: 0;
+  transform: translateY(30px) scale(0.98);
+  filter: blur(8px);
+  transition:
+    opacity 1.8s var(--ease-doux) var(--delai, 0s),
+    transform 1.8s var(--ease-doux) var(--delai, 0s),
+    filter 1.8s var(--ease-doux) var(--delai, 0s);
+}
+.apparition.vue {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+}
+
+/* La petite invitation à descendre */
+.indice {
+  margin-top: var(--sp-4);
+  font-family: var(--f-texte);
+  font-size: var(--fs-petit);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--or-clair);
+  opacity: 0.85;
+}
+
+/* ---------------------------------------------------------------------
+   10. CONTENU — les scènes du parcours (tâche 5)
+   --------------------------------------------------------------------- */
+
+/* Respiration entre les scènes et en haut de chacune */
+.scene { padding-top: var(--sp-5); padding-bottom: var(--sp-5); }
+.scene-intro { margin-bottom: var(--sp-5); }
+
+/* Bloc histoire : photo d'un côté, récit de l'autre */
+.bloc {
+  display: grid;
+  gap: var(--sp-3);
+  align-items: center;
+  max-width: 58rem;
+  margin: 0 auto var(--sp-5);
+  text-align: left;
+}
+
+.bloc__media img {
+  width: 100%;
+  border-radius: var(--rayon);
+  border: 1px solid rgba(201, 162, 39, 0.4);
+  box-shadow: 0 24px 55px rgba(0, 0, 0, 0.55);
+}
+
+.bloc__texte p { margin: 0 0 var(--sp-2); color: var(--creme-sourde); }
+.bloc__texte p:last-child { margin-bottom: 0; }
+.bloc__texte .surtitre { margin-bottom: var(--sp-2); }
+
+/* Sur grand écran : photo et texte côte à côte, inversés à chaque bloc */
+@media (min-width: 800px) {
+  .bloc { grid-template-columns: 1fr 1fr; gap: var(--sp-5); }
+  .bloc--inverse .bloc__media { order: 2; }
+}
+
+/* Œuvres du musée : cadres dorés, légende sous chaque cadre */
+.oeuvres {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-5);
+}
+
+.oeuvre { margin: 0; width: min(88vw, 380px); }
+
+.oeuvre__cadre {
+  background: #09050d;
+  border: 8px solid rgba(201, 162, 39, 0.75);
+  outline: 1px solid rgba(232, 207, 143, 0.35);
+  outline-offset: -14px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), 0 0 40px rgba(201, 162, 39, 0.12);
+}
+
+.oeuvre__cadre img,
+.oeuvre__cadre video {
+  width: 100%;
+  height: min(56svh, 420px);
+  object-fit: cover;
+}
+
+.oeuvre figcaption {
+  margin-top: var(--sp-2);
+  text-align: center;
+}
+
+.plaque {
+  display: block;
+  font-family: var(--f-titre);
+  font-size: var(--fs-petit);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--or);
+  margin-bottom: var(--sp-1);
+}
+
+.oeuvre figcaption p {
+  margin: 0;
+  font-style: italic;
+  color: var(--creme-sourde);
+}
+
+/* Finale : le duo, côte à côte */
+.duo {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-bottom: var(--sp-4);
+}
+
+.oeuvre--duo { width: min(44vw, 230px); }
+.oeuvre--duo .oeuvre__cadre { border-width: 5px; }
+.oeuvre--duo .oeuvre__cadre img,
+.oeuvre--duo .oeuvre__cadre video { height: min(42svh, 300px); }
+
+/* Signature manuscrite, en bas du parcours */
+.signature {
+  margin: var(--sp-3) 0 0;
+  font-family: var(--f-manuscrit);
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  color: var(--or-clair);
+}
+
+/* ---------------------------------------------------------------------
+   11. POLISH — cohérence, micro-interactions, réglages finaux (tâche 6)
+   --------------------------------------------------------------------- */
+
+/* La bascule jardin -> musée : le décor s'échauffe (or) quand le musée
+   est atteint. La classe est posée par js/modules/ambient.js. */
+.fond__or {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 3s var(--ease-doux);
+  background:
+    radial-gradient(ellipse 60% 45% at 50% 30%, rgba(201, 162, 39, 0.1), transparent 70%),
+    radial-gradient(ellipse 40% 35% at 80% 80%, rgba(122, 84, 28, 0.14), transparent 75%);
+}
+body.dans-le-musee .fond__or { opacity: 1; }
+
+/* Les vidéos n'affichent pas de fond blanc pendant le chargement */
+video { background: #09050d; }
+
+/* Sélection de texte dans l'ambiance du site */
+::selection { background: rgba(201, 162, 39, 0.35); color: #fff; }
+
+/* L'invitation à descendre : un léger mouvement, après son apparition */
+.indice span {
+  display: inline-block;
+  animation: descendre 3.2s ease-in-out infinite;
+}
+@keyframes descendre {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(6px); }
+}
+
+/* Micro-interactions — uniquement pour la souris (pas de hover collant
+   sur écran tactile), et toutes très discrètes */
+@media (hover: hover) and (pointer: fine) {
+  .porte__invite {
+    transition: color var(--dur-rapide) ease, border-color var(--dur-rapide) ease;
+  }
+  .porte__invite:hover {
+    color: var(--creme);
+    border-color: var(--or-clair);
+  }
+
+  .bloc__media img { transition: transform 0.9s var(--ease-doux); }
+  .bloc__media:hover img { transform: scale(1.02); }
+
+  .oeuvre__cadre {
+    transition: transform 0.7s var(--ease-doux), box-shadow 0.7s ease;
+  }
+  .oeuvre:hover .oeuvre__cadre {
+    transform: translateY(-5px);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.7), 0 0 55px rgba(201, 162, 39, 0.22);
+  }
+}
+
+.btn-son { transition: opacity var(--dur-rapide) ease; }
+
+/* Écrans très courts : on garde le parcours lisible de bout en bout */
+@media (max-height: 640px) {
+  .scene { padding-top: var(--sp-4); padding-bottom: var(--sp-4); }
+  .scene-intro { margin-bottom: var(--sp-4); }
+  .oeuvre__cadre img,
+  .oeuvre__cadre video { height: 40svh; }
+  .oeuvre--duo .oeuvre__cadre img,
+  .oeuvre--duo .oeuvre__cadre video { height: 32svh; }
+}
+
+/* ---------------------------------------------------------------------
+   12. GALERIE, VISIONNEUSE ET MESSAGE FINAL (ajouts)
+   --------------------------------------------------------------------- */
+
+/* Le mur : aperçus légers, la vidéo ne charge qu'au clic */
+.mur { margin-top: var(--sp-5); }
+.mur__grille {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--sp-2);
+  margin-top: var(--sp-3);
+}
+.vignette {
+  position: relative;
+  padding: 0;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  background: #09050d;
+  border: 3px solid rgba(201, 162, 39, 0.7);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55);
+}
+.vignette img { width: 100%; height: 100%; object-fit: cover; }
+.vignette__play {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  transform: translate(-50%, -50%);
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--or);
+  background: rgba(6, 8, 10, 0.55);
+  color: var(--or-clair);
+  font-size: 0.95rem;
+  padding-left: 3px;
+}
+.oeuvre__cadre[role="button"], .bloc__media[role="button"] { cursor: zoom-in; }
+
+/* Pop-up (élément natif <dialog>) */
+.visionneuse {
+  width: min(92vw, 460px);
+  max-height: 94svh;
+  margin: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--creme);
+  overflow: visible;
+}
+.visionneuse::backdrop { background: rgba(3, 5, 6, 0.9); }
+.visionneuse[open] { animation: visionneuse-fondu 0.35s var(--ease-doux); }
+@keyframes visionneuse-fondu { from { opacity: 0; } to { opacity: 1; } }
+body:has(dialog[open]) { overflow: hidden; }
+
+.visionneuse__corps { display: flex; flex-direction: column; align-items: center; gap: var(--sp-2); text-align: center; }
+.visionneuse__media img, .visionneuse__media video {
+  max-width: 100%;
+  max-height: 66svh;
+  background: #09050d;
+  border: 6px solid rgba(201, 162, 39, 0.75);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65);
+}
+.visionneuse__texte { margin: 0; font-style: italic; color: var(--creme-sourde); max-width: var(--largeur-texte); }
+.visionneuse__fermer {
+  position: fixed;
+  top: calc(var(--sp-2) + env(safe-area-inset-top));
+  right: calc(var(--sp-2) + env(safe-area-inset-right));
+  width: 44px; height: 44px;
+  border: 1px solid var(--or);
+  border-radius: 50%;
+  background: rgba(6, 8, 10, 0.6);
+  color: var(--or-clair);
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+/* Message final : le texte complet garde la place, la frappe passe dessus */
+.message-final { display: grid; max-width: var(--largeur-texte); margin: 0 auto; text-align: center; }
+.message-final__ligne { display: grid; margin: 0 0 var(--sp-2); font-style: italic; color: var(--creme); }
+.message-final__ligne > span { grid-area: 1 / 1; }
+.message-final__frappe { display: none; }
+.message-final--frappe .message-final__plein { opacity: 0; }
+.message-final--frappe .message-final__frappe { display: block; }
+.signature--attente { opacity: 0; transition: opacity 1.5s var(--ease-doux); }
+.signature--attente.vue { opacity: 1; }
+
+@media (hover: hover) and (pointer: fine) {
+  .vignette img { transition: transform 0.7s var(--ease-doux); }
+  .vignette:hover img { transform: scale(1.05); }
+}
