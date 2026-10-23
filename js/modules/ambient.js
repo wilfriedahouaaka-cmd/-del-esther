@@ -33,7 +33,32 @@ export function initLucioles() {
     luciole.style.animationDuration = (6 + Math.random() * 9) + 's';
     luciole.style.animationDelay = (-Math.random() * 12) + 's';
 
+    /* Déplacement aléatoire pour l'animation floatOrb */
+    luciole.style.setProperty('--dx', (Math.random() * 60 - 30) + 'px');
+    luciole.style.setProperty('--dy', (Math.random() * 60 - 30) + 'px');
+
     conteneur.append(luciole);
+  }
+}
+
+/* ---------------------------------------------------------------------
+   Braises qui montent — seulement dans le musée (initBraises)
+   Créées en JS, jamais en HTML. Appelée depuis main.js.
+   --------------------------------------------------------------------- */
+export function initBraises() {
+  const conteneur = document.getElementById('embers');
+  if (!conteneur) return;
+
+  /* Pas de particules pour qui a réduit les animations */
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const total = 20;
+  for (let i = 0; i < total; i++) {
+    const braise = document.createElement('span');
+    braise.style.left = Math.random() * 100 + '%';
+    braise.style.animationDuration = (2 + Math.random() * 4) + 's';
+    braise.style.animationDelay = (Math.random() * 5) + 's';
+    conteneur.append(braise);
   }
 }
 

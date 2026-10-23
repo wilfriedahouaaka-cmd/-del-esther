@@ -54,6 +54,26 @@
   --ease-doux:   cubic-bezier(0.22, 1, 0.36, 1);  /* sortie en douceur, « cinématique » */
   --dur-rapide:  0.35s;
   --dur-lent:    1.6s;
+
+  /* ===== Tokens Phase 5 — habillage visuel cosmique ===== */
+  /* Variables MODIFIÉES (valeurs changées par rapport à l'original) */
+  --nuit:        #06050e;   /* noir profond cosmique */
+  --or:          #e5b842;   /* or principal */
+  --or-clair:    #fff2c6;   /* or clair, halos */
+  --creme:       #fdfaf2;   /* crème chaude */
+
+  /* Variables AJOUTÉES (n'existaient pas avant) */
+  --bleu-profond: #090d24;   /* bleu nuit profond */
+  --nebuleuse-pourpre: #240b3b;  /* nébuleuse pourpre */
+  --nebuleuse-magenta: #5c184c;  /* nébuleuse magenta */
+  --or-brillant:   #ffd700;   /* or brillant, accents */
+  --ambre-cosmique: #fca34d;  /* ambre cosmique */
+  --rose-etoile:   #f9a8d4;   /* rose étoile */
+
+  /* Échelle typographique Phase 5 */
+  --fs-h1:    clamp(2.3rem, 7vw, 3.8rem);
+  --fs-texte-p: clamp(1.1rem, 2vw, 1.45rem);
+  --fs-btn-p: clamp(0.95rem, 1.6vw, 1.15rem);
 }
 
 /* ---------------------------------------------------------------------
@@ -123,6 +143,121 @@ button {
   z-index: 1;
   pointer-events: none;
   filter: blur(0.5px);
+}
+
+/* ===== Couches cosmiques (nébuleuse) — Phase 5 ===== */
+.cosmic-couche-1 {
+  position: absolute;
+  inset: -20px;
+  background:
+    radial-gradient(ellipse at 18% 28%, rgba(92, 24, 76, 0.6), transparent 55%),
+    radial-gradient(ellipse at 82% 72%, rgba(36, 11, 59, 0.8), transparent 60%),
+    radial-gradient(ellipse at 62% 12%, rgba(252, 163, 77, 0.2), transparent 45%),
+    radial-gradient(ellipse at 30% 85%, rgba(24, 32, 84, 0.7), transparent 55%);
+  background-size: cover;
+  background-position: center;
+  opacity: 0.6;
+  filter: none;
+  will-change: transform;
+  animation: cosmicDrift 60s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.cosmic-couche-2 {
+  position: absolute;
+  inset: -10px;
+  background:
+    radial-gradient(ellipse 28% 75% at 50% 100%, rgba(255, 200, 120, 0.28), transparent 70%);
+  background-size: cover;
+  background-position: center bottom;
+  opacity: 0.3;
+  will-change: transform, opacity;
+  animation: pillarPulse 40s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.cosmic-voile {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 40%, rgba(13, 8, 28, 0.45) 0%, rgba(6, 5, 14, 0.88) 80%);
+  pointer-events: none;
+}
+body.dans-le-musee .cosmic-voile {
+  background: radial-gradient(circle at 50% 40%, rgba(60, 15, 60, 0.4) 0%, rgba(6, 5, 14, 0.88) 80%);
+}
+
+@keyframes cosmicDrift {
+  0%   { transform: scale(1) translate(0, 0); }
+  50%  { transform: scale(1.08) translate(-1%, 2%); }
+  100% { transform: scale(1.04) translate(1.5%, -1.5%); }
+}
+
+@keyframes pillarPulse {
+  0%   { opacity: 0.18; transform: scale(1); }
+  100% { opacity: 0.35; transform: scale(1.06); }
+}
+
+/* Poussière d'étoiles */
+#stardust {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image:
+    radial-gradient(1.5px 1.5px at 25px 35px, #fff, transparent),
+    radial-gradient(1.2px 1.2px at 85px 120px, var(--or-clair), transparent),
+    radial-gradient(2px 2px at 150px 70px, #ffffff, transparent),
+    radial-gradient(1px 1px at 60px 180px, var(--rose-etoile), transparent),
+    radial-gradient(1.5px 1.5px at 220px 160px, var(--ambre-cosmique), transparent);
+  background-size: 260px 280px;
+  animation: stardustTwinkle 8s ease-in-out infinite alternate;
+}
+@keyframes stardustTwinkle {
+  0%   { opacity: 0.45; }
+  100% { opacity: 0.95; }
+}
+
+/* Lucioles dorées avec halo (créées par JS, animées en CSS) */
+.luciole {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle,
+    rgba(255, 245, 190, 0.95),
+    rgba(229, 184, 66, 0.6) 50%,
+    transparent 70%);
+  box-shadow: 0 0 12px 3px rgba(253, 222, 114, 0.9), 0 0 25px rgba(229, 184, 66, 0.6);
+  animation: floatOrb ease-in-out infinite alternate;
+  will-change: transform, opacity;
+}
+@keyframes floatOrb {
+  from { transform: translate(0, 0) scale(0.7); opacity: 0.25; }
+  to   { transform: translate(var(--dx, 15px), var(--dy, -25px)) scale(1.3); opacity: 0.95; }
+}
+
+/* Braises qui montent — seulement dans le musée */
+#embers {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+}
+body.dans-le-musee #embers { opacity: 1; }
+#embers span {
+  position: absolute;
+  bottom: -10px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 205, 140, 0.85);
+  box-shadow: 0 0 10px rgba(255, 180, 100, 0.95);
+  animation: emberRise linear infinite;
+}
+@keyframes emberRise {
+  0%   { transform: translateY(0) translateX(0); opacity: 0; }
+  15%  { opacity: 0.85; }
+  100% { transform: translateY(-110dvh) translateX(24px); opacity: 0; }
 }
 
 /* ---------------------------------------------------------------------
@@ -468,29 +603,6 @@ body.dans-le-jardin .fond__lueur { opacity: 1; }
   transition: opacity 2.2s var(--ease-doux);
 }
 body.dans-le-jardin .lucioles { opacity: 1; }
-
-/* Chaque luciole : un point de lumière qui dérive et palpite */
-@keyframes vacille {
-  0%   { transform: translate(0, 0) scale(0.8); opacity: 0.15; }
-  35%  { opacity: 0.8; }
-  50%  { transform: translate(15px, -25px) scale(1.1); opacity: 0.5; }
-  85%  { opacity: 0.8; }
-  100% { transform: translate(-15px, -45px) scale(0.8); opacity: 0.15; }
-}
-
-.luciole {
-  position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle,
-    rgba(232, 207, 143, 0.95),
-    rgba(201, 162, 39, 0.4) 50%,
-    transparent 70%);
-  animation-name: vacille;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-  will-change: transform, opacity;
-}
 
 /* Apparition progressive : un élément entre lorsqu'il arrive à l'écran.
    Le décalage (--delai) s'écrit dans le HTML, élément par élément. */

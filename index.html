@@ -15,7 +15,7 @@
 <!-- Polices : Cinzel (titres) · Cormorant Garamond (texte) · Great Vibes (manuscrit) -->
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&amp;family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&amp;family=Great+Vibes&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&amp;family=Cinzel:wght@400;600;700&amp;family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&amp;family=Great+Vibes&amp;display=swap" rel="stylesheet"/>
 <link href="style.css" rel="stylesheet"/>
 <!-- Favicon : médaillon doré du portail (évite un 404 sur /favicon.ico) -->
 <link href="assets/favicon.svg" rel="icon" type="image/svg+xml"/>
@@ -23,13 +23,19 @@
 <body class="portail-bloque">
 
 <!-- ============================================================
-     DÉCOR DE FOND (statique à cette étape)
+     DÉCOR DE FOND — voiles + couches cosmiques (nébuleuse, voile, étoiles)
      ============================================================ -->
 <div aria-hidden="true" class="fond">
   <div class="fond__nuit"></div>
   <div class="fond__lueur"></div>
   <div class="fond__or"></div>
+  <div class="cosmic-couche-1"></div>
+  <div class="cosmic-couche-2"></div>
+  <div class="cosmic-voile"></div>
 </div>
+
+<!-- Poussière d'étoiles (scintillement en CSS) -->
+<div aria-hidden="true" id="stardust"></div>
 
 <!-- Lucioles : conteneur vide, rempli en JavaScript à la tâche 4 -->
 <div aria-hidden="true" class="lucioles" id="lucioles"></div>

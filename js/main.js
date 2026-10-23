@@ -9,7 +9,7 @@
 
 import { initScenes, go, prochain, reset } from './modules/scenes.js';
 import { initPortail } from './modules/portal.js';
-import { initLucioles, initTon } from './modules/ambient.js';
+import { initLucioles, initTon, initBraises } from './modules/ambient.js';
 import { initApparitions } from './modules/reveal.js';
 import { initMedias } from './modules/medias.js';
 import { initVisionneuse } from './modules/visionneuse.js';
@@ -84,6 +84,9 @@ initPortail({
 
 /* Les lucioles du jardin (elles restent invisibles jusqu'à l'arrivée) */
 initLucioles();
+
+/* Les braises du musée (apparaisent quand body.dans-le-musee est ajouté) */
+initBraises();
 
 /* Les éléments entrent à l'écran au fur et à mesure du défilement */
 initApparitions();
