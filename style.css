@@ -729,6 +729,28 @@ video { background: #09050d; }
 }
 .oeuvre__cadre[role="button"], .bloc__media[role="button"] { cursor: zoom-in; }
 
+/* Bouton fermer de la visionneuse : cible tactile ≥ 44 px */
+.visionneuse__fermer {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid var(--or);
+  background: rgba(201, 162, 39, 0.16);
+  color: var(--creme);
+  font-size: 1.5rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s;
+}
+.visionneuse__fermer:hover, .visionneuse__fermer:focus-visible {
+  background: rgba(201, 162, 39, 0.35);
+  box-shadow: 0 0 15px rgba(201, 162, 39, 0.3);
+}
+
 /* Pop-up (élément natif <dialog>) */
 .visionneuse {
   width: min(92vw, 460px);

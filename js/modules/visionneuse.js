@@ -83,7 +83,8 @@ export function initVisionneuse({ musique = null, musiqueCoupee = () => false } 
   boite.addEventListener('click', e => { if (e.target === boite) boite.close(); });
 
   document.querySelectorAll('.vignette, .oeuvre__cadre, .bloc__media').forEach(el => {
-    const action = () => withLock(() => ouvrir(el), 400);
+    const lockRef = { locked: false };
+    const action = () => withLock(() => ouvrir(el), lockRef);
     el.addEventListener('click', action);
     if (el.tagName !== 'BUTTON') {          // un <button> gère déjà Entrée/Espace
       el.setAttribute('role', 'button');
