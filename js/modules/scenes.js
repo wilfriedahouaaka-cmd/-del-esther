@@ -12,17 +12,19 @@
    ===================================================================== */
 
 import { withLock, createLock } from '../utils/lock.js';
+import { ecrireLettre } from './message.js';
 
 /* Sélecteurs des écrans (IDs définis dans index.html) */
 const SELECTEURS = {
-  portail:      '#ecran-portail',
-  jardinBebe:   '#ecran-jardin-bebe',
-  jardinMicro:  '#ecran-jardin-micro',
-  revelation:   '#ecran-revelation',
-  portesGalerie:'#ecran-portes-galerie',
-  galerie:      '#ecran-galerie',
-  mur:          '#ecran-mur',
-  finale:       '#ecran-finale',
+  portail:   '#ecran-portail',
+  jardinBebe: '#ecran-jardin-bebe',
+  jardinMicro: '#ecran-jardin-micro',
+  revelation: '#ecran-revelation',
+  portesGalerie: '#ecran-portes-galerie',
+  galerie:   '#ecran-galerie',
+  mur:       '#ecran-mur',
+  finale:    '#ecran-finale',
+  lettre:    '#ecran-lettre',
 };
 
 let ecrans = [];
@@ -113,7 +115,58 @@ export function go(n) {
     if (n === 7) {
       /* Écran finale : rien de particulier ici (géré par message.js) */
     }
+
+    if (n === 8) {
+      /* Écran lettre : le message s'écrit lettre par lettre */
+      ecrireLettre();
+    }
   }, verrou);
+}
+
+/**
+ * Remet tous les écrans et leurs états à zéro pour la relecture.
+ * Protegé par withLock depuis main.js.
+ */
+export function reset() {
+  /* 1. Tous les écrans inactifs sauf le portail (index 0) */
+  ecrans.forEach((ecran, i) => {
+    ecran.classList.toggle('active', i === 0);
+  });
+  cur = 0;
+
+  /* 2. Révélation : retirer .bloomed */
+  const revelation = document.querySelector(SELECTEURS.revelation);
+  if (revelation) revelation.classList.remove('bloomed');
+
+  /* 3. Portes de la galerie : fermer */
+  const portesGalerie = document.querySelector(SELECTEURS.portesGalerie);
+  if (portesGalerie) portesGalerie.classList.remove('doors-ouvert');
+
+  /* 4. Mur : cacher toutes les cellules */
+  document.querySelectorAll('#ecran-mur .cellule').forEach((c) => {
+    c.classList.remove('visible');
+  });
+
+  /* 5. Finale : retirer .shown */
+  const finale = document.querySelector(SELECTEURS.finale);
+  if (finale) finale.classList.remove('shown');
+
+  /* 6. Vidéos : pause et retour au début */
+  document.querySelectorAll('video').forEach((v) => {
+    v.pause();
+    v.currentTime = 0;
+  });
+
+  /* 7. Galerie : première œuvre */
+  afficherOeuvreGalerie(0);
+
+  /* 8. États des messages : retirer les classes de frappe/attente */
+  document.querySelectorAll('.message-final--frappe').forEach((el) => {
+    el.classList.remove('message-final--frappe');
+  });
+  document.querySelectorAll('.signature--attente, .signature--vue').forEach((el) => {
+    el.classList.remove('signature--attente', 'signature--vue');
+  });
 }
 
 /**

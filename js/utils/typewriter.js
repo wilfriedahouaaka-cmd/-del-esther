@@ -14,7 +14,7 @@ export function ecrire(element, texte, delai = 38) {
     let i = 0;
     const suite = () => {
       i += 1;
-      element.textContent = texte.slice(0, i);
+      element.textContent = Array.from(texte).slice(0, i).join('');
       if (i < texte.length) window.setTimeout(suite, delai);
       else resolve();
     };

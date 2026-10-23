@@ -7,7 +7,7 @@
      - transitions protégées par withLock() (à partir de la tâche 3)
    ===================================================================== */
 
-import { initScenes, go, prochain } from './modules/scenes.js';
+import { initScenes, go, prochain, reset } from './modules/scenes.js';
 import { initPortail } from './modules/portal.js';
 import { initLucioles, initTon } from './modules/ambient.js';
 import { initApparitions } from './modules/reveal.js';
@@ -106,6 +106,16 @@ document.querySelectorAll('.btn-next').forEach((bouton) => {
     prochain();
   });
 });
+
+/* Bouton "Relire l'Épopée" : remise à zéro complète + retour au portail */
+const btnRelire = document.getElementById('btn-relire-epopee');
+if (btnRelire) {
+  btnRelire.addEventListener('click', () => {
+    reset().then(() => {
+      go(0);
+    });
+  });
+}
 
 /* ---------------------------------------------------------------------
    3. Fin du parcours de démarrage — le site est complet (tâches 1 à 6)
