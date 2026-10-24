@@ -38,12 +38,16 @@ export function withLock(fn, lockRef = { locked: false }) {
 
 /**
  * Crée un verrou nommé réutilisable (pour plusieurs éléments partageant le même verrou).
+ * L'état `locked` est géré en interne (ni getter seul, ni propriété externe instable).
+ * L'objet exposé permet soit de lire/.modifier `.locked`, soit d'utiliser `.withLock(fn)`
+ * qui gère lui-même le verrouillage.
  * @returns {{ locked: boolean, withLock: Function }}
  */
 export function createLock() {
   const lock = { locked: false };
   return {
     get locked() { return lock.locked; },
+    set locked(valeur) { lock.locked = !!valeur; },
     withLock: (fn) => withLock(fn, lock)
   };
 }

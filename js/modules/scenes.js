@@ -11,8 +11,18 @@
    - commentaires en français
    ===================================================================== */
 
-import { withLock, createLock } from '../utils/lock.js';
-import { ecrireLettre } from './message.js';
+import { createLock } from '../utils/lock.js';
+import {
+  ecrireLettre,
+  initMessageFinal,
+  reinitialiserLettre,
+  reinitialiserMessageFinal,
+} from './message.js';
+import { afficherOeuvreGalerie, resetGalerie } from './galerie.js';
+import { lancerMurCadres, resetMur } from './mur.js';
+import { resetEtapes } from './etapes.js';
+import { afficherApparitionsVisibles } from './reveal.js';
+import { initLenis } from '../utils/lenis.js';
 
 /* Sélecteurs des écrans (IDs définis dans index.html) */
 const SELECTEURS = {
@@ -49,6 +59,10 @@ export function initScenes() {
     if (i === 0) ecran.classList.add('active');
     else ecran.classList.remove('active');
   });
+
+  /* Le bouton des portes de la galerie a sa propre transition 3D :
+     il ne doit pas passer par le handler générique .btn-next. */
+  initPortesGalerie();
 }
 
 /**
@@ -59,17 +73,96 @@ export function prochain() {
 }
 
 /**
+ * Affiche immédiatement les .apparition d'une scène dans deux cas :
+ * - les deux premiers écrans (portail, jardin bébé) doivent être complets
+ *   dès l'arrivée, sans attendre un scroll ;
+ * - la scène n'est pas défilable : ScrollTrigger n'aurait aucun mouvement
+ *   pour révéler les éléments, qui resteraient invisibles.
+ * Pour une scène défilable plus bas dans le parcours, on laisse au
+ * contraire ScrollTrigger piloter l'animation (y/opacity avec scrub).
+ * @param {HTMLElement|null} scene
+ * @param {number} index
+ */
+function afficherApparitionsSiNecessaire(scene, index) {
+  if (!scene) return;
+  const defilable = scene.scrollHeight > scene.clientHeight + 2;
+  if (index <= 1 || !defilable) {
+    afficherApparitionsVisibles(scene);
+  }
+}
+
+/**
  * Active l'écran n, désactive les autres, met en pause les vidéos.
  * Retourne une promesse qui se résout quand la transition est prête.
  * @param {number} n - index de l'écran à activer
  */
 export function go(n) {
-  return withLock(async () => {
+  return verrou.withLock(async () => {
+    const ancien = ecrans[cur];
+    const nouveau = ecrans[n];
     cur = n;
 
-    ecrans.forEach((ecran, i) => {
-      ecran.classList.toggle('active', i === n);
-    });
+    /* Lenis doit piloter la nouvelle scène : le site défile à l'intérieur
+       de chaque .scene, pas sur window. L'instance précédente est détruite. */
+    const lenis = initLenis(nouveau);
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const gsapDispo = typeof window.gsap !== 'undefined';
+
+    /* Basculement immédiat : mouvement réduit, GSAP indisponible,
+       ou demande de rester sur le même écran. */
+    if (prefersReduced || !gsapDispo || !ancien || !nouveau || ancien === nouveau) {
+      if (gsapDispo) {
+        ecrans.forEach((ecran) => {
+          window.gsap.set(ecran, { clearProps: 'opacity,transform' });
+        });
+      }
+      ecrans.forEach((ecran, i) => {
+        ecran.classList.toggle('active', i === n);
+      });
+    } else {
+      /* Fondu enchaîné GSAP : l'ancien s'efface pendant que le nouveau
+         apparaît. On coupe la transition CSS le temps de l'animation
+         pour éviter que les deux systèmes se superposent. */
+      const transitionAncien = ancien.style.transition;
+      const transitionNouveau = nouveau.style.transition;
+      ancien.style.transition = 'none';
+      nouveau.style.transition = 'none';
+
+      nouveau.classList.add('active');
+      window.gsap.set(ancien, { opacity: 1 });
+      window.gsap.set(nouveau, { opacity: 0, scale: 0.96, y: 12 });
+
+      await new Promise((resolve) => {
+        const tl = window.gsap.timeline({
+          onComplete: () => {
+            ancien.classList.remove('active');
+            window.gsap.set(ancien, { clearProps: 'opacity,transform' });
+            window.gsap.set(nouveau, { clearProps: 'opacity,transform' });
+            ancien.style.transition = transitionAncien;
+            nouveau.style.transition = transitionNouveau;
+            resolve();
+          },
+        });
+
+        tl.to(ancien, {
+          opacity: 0,
+          duration: 0.35,
+          ease: 'power2.out',
+        }, 0);
+
+        tl.to(nouveau, {
+          opacity: 1,
+          scale: 1,
+          y: 0,
+          duration: 0.55,
+          ease: 'power2.out',
+        }, 0);
+      });
+    }
+
+    /* La nouvelle scène est active : Lenis recalcule sa limite de scroll. */
+    lenis?.resize();
 
     /* Toutes les vidéos en pause lors d'un changement d'écran */
     document.querySelectorAll('video').forEach((v) => v.pause());
@@ -79,27 +172,12 @@ export function go(n) {
       /* Écran jardin bébé : rien de particulier */
     }
 
-    if (n === 2) {
-      /* Écran jardin micro : le bouton "Continuer" arrive en retard (~6 s) */
-      const bouton = document.querySelector('#ecran-jardin-micro .btn-next');
-      if (bouton) {
-        bouton.classList.add('late');
-        window.setTimeout(() => {
-          bouton.classList.remove('late');
-        }, 6000);
-      }
-    }
-
     if (n === 3) {
       /* Écran révélation d'Esther : l'étoile bourgeonne via CSS (.bloomed) */
       const ecran = document.querySelector(SELECTEURS.revelation);
       if (ecran) {
         ecran.classList.add('bloomed');
       }
-    }
-
-    if (n === 4) {
-      /* Écran portes de la galerie : rien de particulier (CSS gère l'ouverture) */
     }
 
     if (n === 5) {
@@ -113,14 +191,37 @@ export function go(n) {
     }
 
     if (n === 7) {
-      /* Écran finale : rien de particulier ici (géré par message.js) */
+      /* Écran finale : le message s'écrit quand il devient visible,
+         puis le bouton « Continuer » apparaît. */
+      initMessageFinal();
     }
 
     if (n === 8) {
-      /* Écran lettre : le message s'écrit lettre par lettre */
+      /* Écran lettre : premier paragraphe seulement, les suivants
+         seront révélés par les boutons de la lettre. */
       ecrireLettre();
     }
-  }, verrou);
+
+    /* Portail et jardin bébé : affichage complet immédiat. Scène non
+       défilable : pas de scroll possible, donc affichage immédiat aussi.
+       Scène défilable plus bas : ScrollTrigger garde la main.
+       On attend la logique spécifique ci-dessus : .bloomed et la première
+       œuvre de la galerie changent la hauteur de la scène. */
+    afficherApparitionsSiNecessaire(nouveau, n);
+
+    /* La scène active a changé : ScrollTrigger doit recalculer ses points
+       de départ (parallaxe, apparitions) pour le bon scroller. */
+    if (typeof window.ScrollTrigger !== 'undefined') {
+      window.requestAnimationFrame(() => {
+        window.ScrollTrigger.refresh();
+        /* Le refresh peut modifier la hauteur mesurée : on réajuste Lenis. */
+        lenis?.resize();
+        /* Le refresh peut réappliquer un tween résiduel : on refixe
+           l'état final uniquement quand la scène ne doit pas être animée. */
+        afficherApparitionsSiNecessaire(nouveau, n);
+      });
+    }
+  });
 }
 
 /**
@@ -128,9 +229,11 @@ export function go(n) {
  * Protegé par withLock depuis main.js.
  */
 export function reset() {
-  /* 1. Tous les écrans inactifs sauf le portail (index 0) */
+  /* 1. Tous les écrans inactifs sauf le portail (index 0) ;
+        chaque scène repart de son début. */
   ecrans.forEach((ecran, i) => {
     ecran.classList.toggle('active', i === 0);
+    ecran.scrollTop = 0;
   });
   cur = 0;
 
@@ -142,62 +245,79 @@ export function reset() {
   const portesGalerie = document.querySelector(SELECTEURS.portesGalerie);
   if (portesGalerie) portesGalerie.classList.remove('doors-ouvert');
 
-  /* 4. Mur : cacher toutes les cellules */
-  document.querySelectorAll('#ecran-mur .cellule').forEach((c) => {
-    c.classList.remove('visible');
-  });
-
-  /* 5. Finale : retirer .shown */
+  /* 4. Finale : retirer .shown */
   const finale = document.querySelector(SELECTEURS.finale);
   if (finale) finale.classList.remove('shown');
 
-  /* 6. Vidéos : pause et retour au début */
+  /* 5. Vidéos : pause et retour au début */
   document.querySelectorAll('video').forEach((v) => {
     v.pause();
     v.currentTime = 0;
   });
 
-  /* 7. Galerie : première œuvre */
-  afficherOeuvreGalerie(0);
+  /* 6. Récit : les deuxièmes textes redeviennent cachés. */
+  resetEtapes();
 
-  /* 8. États des messages : retirer les classes de frappe/attente */
-  document.querySelectorAll('.message-final--frappe').forEach((el) => {
-    el.classList.remove('message-final--frappe');
-  });
-  document.querySelectorAll('.signature--attente, .signature--vue').forEach((el) => {
-    el.classList.remove('signature--attente', 'signature--vue');
-  });
+  /* 7. Galerie : retour à la première œuvre. */
+  resetGalerie();
+
+  /* 8. Mur : retour à la première page de 8 vignettes. */
+  resetMur();
+
+  /* 9. Messages : la finale et la lettre repartent de zéro. */
+  reinitialiserMessageFinal();
+  reinitialiserLettre();
+
+  /* La relecture est terminée : on rend une promesse pour conserver
+     l'interface existante de main.js. */
+  return Promise.resolve();
 }
 
 /**
- * Affiche la n-ième œuvre de la galerie (comme showPunch dans la référence).
- * @param {number} i - index de l'œuvre
+ * Ouvre les portes métalliques de la galerie avant de passer au musée.
+ * Le CSS existant (.doors + .doors-ouvert) applique la rotation 3D ;
+ * on attend la fin de la transition de 1,6 s, puis on change d'écran.
+ * En mouvement réduit, l'ouverture est instantanée et on enchaîne.
  */
-function afficherOeuvreGalerie(i) {
-  const oeuvres = [...document.querySelectorAll('#ecran-galerie .oeuvre')];
-  oeuvres.forEach((oeuvre, k) => {
-    const active = k === i;
-    oeuvre.classList.toggle('on', active);
-    const video = oeuvre.querySelector('video');
-    if (video) {
-      if (active) video.play().catch(() => {});
-      else video.pause();
-    }
+function initPortesGalerie() {
+  const bouton = document.getElementById('btn-open-gallery');
+  const scene = document.querySelector(SELECTEURS.portesGalerie);
+  if (!bouton || !scene) return;
+
+  const verrouPortes = createLock();
+
+  bouton.addEventListener('click', () => {
+    verrouPortes.withLock(async () => {
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /* Déclenche l'ouverture 3D définie dans style.css. */
+      scene.classList.add('doors-ouvert');
+
+      if (!prefersReduced) {
+        /* Attendre la fin de la transition CSS (1,6 s), avec un délai de
+           sécurité si l'événement transitionend ne se déclenche pas. */
+        await new Promise((resolve) => {
+          const porte = scene.querySelector('.doors .porte');
+          if (!porte) {
+            resolve();
+            return;
+          }
+
+          let termine = false;
+          const finir = () => {
+            if (termine) return;
+            termine = true;
+            porte.removeEventListener('transitionend', finir);
+            resolve();
+          };
+
+          porte.addEventListener('transitionend', finir, { once: true });
+          window.setTimeout(finir, 1900);
+        });
+      }
+
+      await go(5);
+    });
   });
 }
 
-/**
- * Apparition en cascade des cellules du mur de cadres.
- * Délai total <= ~3 s (délai par vignette = min(350 ms, 3000 ms / nb)).
- */
-function lancerMurCadres() {
-  const cellules = [...document.querySelectorAll('#ecran-mur .cellule')];
-  const total = cellules.length;
-  const delaiParVignette = Math.min(350, 3000 / Math.max(total, 1));
-
-  cellules.forEach((cellule, i) => {
-    window.setTimeout(() => {
-      cellule.classList.add('visible');
-    }, 300 + i * delaiParVignette);
-  });
-}

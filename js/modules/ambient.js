@@ -88,3 +88,65 @@ export function initTon() {
   observateur.observe(musee);
   if (finale) observateur.observe(finale);
 }
+
+/* ---------------------------------------------------------------------
+   Parallaxe du décor — les couches de fond se déplacent légèrement
+   avec le défilement de la scène active (GSAP ScrollTrigger).
+   Le site défile à l'intérieur de chaque .scene (overflow-y: auto) :
+   on crée donc un ScrollTrigger par scène et seule la scène active
+   pilote le décor.
+   Respecte prefers-reduced-motion : aucune parallaxe si activé.
+   (À appeler une seule fois, depuis main.js.)
+   --------------------------------------------------------------------- */
+export function initParallaxe() {
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReduced) return;
+
+  if (
+    typeof window.gsap === 'undefined' ||
+    typeof window.ScrollTrigger === 'undefined'
+  ) {
+    return;
+  }
+
+  try {
+    window.gsap.registerPlugin(window.ScrollTrigger);
+  } catch (e) {
+    /* Plugin déjà enregistré : on continue. */
+  }
+
+  const nuit = document.querySelector('.fond__nuit');
+  const cosmique = document.querySelector('.cosmic-couche-1');
+  if (!nuit && !cosmique) return;
+
+  const ecrans = [...document.querySelectorAll('.scene')];
+
+  ecrans.forEach((scene) => {
+    window.ScrollTrigger.create({
+      scroller: scene,
+      /* Bornes explicites : on veut toute la hauteur de défilement de la
+         scène (scrollHeight - clientHeight), et non la hauteur visible.
+         Sans trigger, start/end numériques pilotent la progression. */
+      start: 0,
+      end: () => Math.max(1, scene.scrollHeight - scene.clientHeight),
+      onUpdate: (self) => {
+        /* Seule la scène active pilote le décor : les scènes inactives
+           ne doivent pas écraser la position avec leur propre scroll. */
+        if (!scene.classList.contains('active')) return;
+
+        if (nuit) {
+          window.gsap.set(nuit, { y: -60 * self.progress });
+        }
+
+        /* Couche cosmique : `translate` est une propriété CSS distincte
+           de `transform` ; elle se combine donc avec l'animation CSS
+           `cosmicDrift` au lieu de la remplacer. */
+        if (cosmique) {
+          window.gsap.set(cosmique, {
+            translate: `0px ${-40 * self.progress}px`,
+          });
+        }
+      },
+    });
+  });
+}

@@ -140,7 +140,7 @@ chaque modification.*
 
 - **Galerie** : les vidéos du dossier `assets/videos/` (sauf 3 doublons) sont affichées en aperçus dans le musée (`.mur`). Les aperçus sont dans `assets/posters/` (un `.jpg` par vidéo, ~18 Ko) ; la vidéo ne se charge qu'au clic.
 - **Pop-up** : `js/modules/visionneuse.js` (élément `<dialog>`) agrandit les photos et lit les vidéos ; la musique se met en pause pendant une vidéo.
-- **Message final** : `js/modules/message.js` + `js/utils/typewriter.js`. Le texte est dans `index.html` (`#message-final`, un `<p data-machine>` par ligne).
+- **Message final** : `js/modules/message.js` + `js/utils/typewriter.js`. Le texte vient de `-del-esther-main/js/main.js` (constante `finalMessageText`) : le premier paragraphe est sur l'écran 8 (`#message-final`), la suite dans la lettre (`#message-lettre`, 2 étapes).
 - **Rechargement** (F5 / Ctrl+F5) : le parcours repart de la porte (`scrollRestoration = 'manual'` dans `main.js`).
 - **Bascule or** (`ambient.js`) : se déclenche maintenant sur la bande centrale de l'écran, même si le musée est très long.
 - Doublons repérés (contenu identique) : `ax.mp4`=`kk.mp4`, `abz.mp4`=`W.mp4`, `sze.mp4`=`Z.mp4`.

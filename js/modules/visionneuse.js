@@ -1,7 +1,8 @@
 /* =====================================================================
    Visionneuse — le pop-up qui agrandit une œuvre (photo ou vidéo)
    ---------------------------------------------------------------------
-   Éléments cliquables : .vignette (galerie), .oeuvre__cadre, .bloc__media.
+   Éléments cliquables : .vignette (galerie), .oeuvre__cadre, .bloc__media,
+   .photo-esther et .photo-duo (révélation d'Esther).
    - Une vignette porte data-video (chemin) et data-titre ; elle n'affiche
      qu'une image d'aperçu : la vidéo ne se charge qu'au clic (léger).
    - Pour une œuvre du musée, titre et phrase sont lus dans sa plaque /
@@ -29,8 +30,11 @@ export function initVisionneuse({ musique = null, musiqueCoupee = () => false } 
 
   function lire(el) {
     const figure = el.closest('figure');
-    const video  = el.querySelector('video');
-    const image  = el.querySelector('img');
+    /* Le déclencheur peut être lui-même une image ou une vidéo
+       (.photo-esther, .photo-duo) : querySelector ne cherche que les
+       descendants, il faut donc tester l'élément d'abord. */
+    const video  = el.matches('video') ? el : el.querySelector('video');
+    const image  = el.matches('img') ? el : el.querySelector('img');
     return {
       video: el.dataset.video || sansHash(video && video.getAttribute('src')),
       image: image ? (image.currentSrc || image.src) : '',
@@ -82,7 +86,9 @@ export function initVisionneuse({ musique = null, musiqueCoupee = () => false } 
   fermer.addEventListener('click', () => boite.close());
   boite.addEventListener('click', e => { if (e.target === boite) boite.close(); });
 
-  document.querySelectorAll('.vignette, .oeuvre__cadre, .bloc__media').forEach(el => {
+  document.querySelectorAll(
+    '.vignette, .oeuvre__cadre, .bloc__media, .photo-esther, .photo-duo'
+  ).forEach(el => {
     const lockRef = { locked: false };
     const action = () => withLock(() => ouvrir(el), lockRef);
     el.addEventListener('click', action);

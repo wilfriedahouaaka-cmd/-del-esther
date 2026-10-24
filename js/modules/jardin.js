@@ -11,6 +11,7 @@
    ===================================================================== */
 
 import { withLock } from '../utils/lock.js';
+import { getLenis } from '../utils/lenis.js';
 
 /** Verrou pour éviter les réentrées pendant la transition */
 const verrouTransition = { locked: false };
@@ -24,37 +25,42 @@ function scrollerVersJardin(onComplete) {
   const jardin = document.querySelector('#ecran-jardin-bebe');
   if (!jardin) { onComplete?.(); return; }
 
+  const lenis = getLenis();
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // Cible calculée depuis le haut de la page (offsetTop seul peut être faux
-  // si la page a déjà défilé).
-  const cibleY = jardin.getBoundingClientRect().top + window.scrollY;
 
-  if (prefersReduced) {
-    window.scrollTo({ top: cibleY, behavior: 'auto' });
+  /* Le site défile à l'intérieur de la scène : la cible est le début
+     de la scène du jardin, pas une position de window. */
+  const cibleY = 0;
+
+  /* Cible déjà atteinte : on libère immédiatement le verrou. */
+  if (Math.abs(jardin.scrollTop - cibleY) < 5) {
     onComplete?.();
     return;
   }
 
-  // Scroll doux natif
-  window.scrollTo({ top: cibleY, behavior: 'smooth' });
+  /* Avec Lenis : défilement cinématique confié à l'instance de la scène. */
+  if (lenis && !prefersReduced) {
+    lenis.scrollTo(cibleY, {
+      duration: 1.2,
+      onComplete: () => { onComplete?.(); },
+    });
+    return;
+  }
 
-  // Détecte la fin du scroll (polling simple, fiable).
-  // Sécurité : onComplete est TOUJOURS appelé au bout de 3000 ms, même si
-  // le scroll n'atteint pas exactement la cible (évite le verrou permanent).
-  const startY = window.scrollY;
-  let lastY = startY;
+  /* Sans Lenis (réduit-motion, tactile ou indisponible) : scroll natif
+     de la scène, avec détection de fin pour ne jamais bloquer le verrou. */
+  jardin.scrollTo({ top: cibleY, behavior: prefersReduced ? 'auto' : 'smooth' });
+
   const debut = performance.now();
 
   function checkScroll() {
-    const currentY = window.scrollY;
-    const atteint = Math.abs(currentY - cibleY) < 5;
+    const atteint = Math.abs(jardin.scrollTop - cibleY) < 5;
     const timeout = performance.now() - debut > 3000;
 
     if (atteint || timeout) {
       onComplete?.();
       return;
     }
-    lastY = currentY;
     requestAnimationFrame(checkScroll);
   }
 

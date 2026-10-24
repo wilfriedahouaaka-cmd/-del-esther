@@ -7,7 +7,7 @@
      Autorise uniquement les ressources provenant de soi-même ('self')
      et des domaines de confiance (CDN GSAP, Google Fonts).
      Aucun script ni style inline n'est exécuté. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'sha256-vvt4KWwuNr51XfE5m+hzeNEGhiOfZzG97ccfqGsPwvE='; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self'; media-src 'self'; connect-src 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net 'sha256-vvt4KWwuNr51XfE5m+hzeNEGhiOfZzG97ccfqGsPwvE='; style-src 'self' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self'; media-src 'self'; connect-src 'self' https://cdn.jsdelivr.net;">
 <meta content="Une expérience immersive : une porte, un jardin secret, un musée. Créé pour Esther." name="description"/>
 <meta content="noindex, nofollow" name="robots"/>
 <title>Del &amp; Esther — Le Jardin Caché</title>
@@ -48,11 +48,21 @@
 
 <!-- ============================================================
      L'EXPÉRIENCE : écrans successifs, un seul visible à la fois
+     ============================================================
+     CARTE DU PARCOURS (contenu réparti) :
+       Écran 2  : 1 photo (bébé) — 2 textes, 2 étapes.
+       Écran 3  : 1 photo (micro) — 2 textes, 2 étapes.
+       Écran 4  : 3 photos (1 portrait + 2 duo) — 1 légende.
+       Écran 5  : 0 média — 1 texte + les portes.
+       Écran 6  : 5 œuvres (2 photos + 3 vidéos), 1 œuvre à la fois.
+       Écran 7  : 28 vidéos, 8 vignettes par page (4 pages).
+       Écran 8  : 2 médias (1 photo + 1 vidéo) — 1er paragraphe du message.
+       Écran 9  : 0 média — 2 paragraphes, 2 étapes (suite du message).
      ============================================================ -->
 <main id="experience">
 
   <!-- Écran 1 — LE PORTAIL : une arche fermée, au centre de l'écran -->
-  <section class="scene scene--portail" id="ecran-portail">
+  <section class="scene scene--portail active" id="ecran-portail">
 
     <!-- Bloc supérieur : titre -->
     <div class="portail__haut">
@@ -84,13 +94,12 @@
 
   </section>
 
-  <!-- Écran 2 — LE JARDIN : Del bébé -->
+  <!-- Écran 2 — LE JARDIN : Del bébé (1 photo, 2 textes en 2 étapes) -->
   <section class="scene" id="ecran-jardin-bebe">
     <div class="conteneur scene-intro">
       <p class="surtitre apparition" data-delai="0">✦ Le jardin ✦</p>
       <h2 class="titre apparition" data-delai="0.2">Tu es entrée.</h2>
       <p class="texte apparition" data-delai="0.4">Autour de toi, les souvenirs vont éclore un à un.</p>
-      <p class="indice apparition" data-delai="0.6"><span>Descends doucement ↓</span></p>
     </div>
     <div class="conteneur">
       <article class="bloc">
@@ -99,15 +108,20 @@
         </div>
         <div class="bloc__texte apparition" data-delai="0.15">
           <p class="surtitre">✦ Le commencement ✦</p>
-          <p>Il était une fois un petit garçon qui s'appelait Del.</p>
-          <p>Il vivait une vie banale, sans savoir que quelqu'un, quelque part, grandissait aussi.</p>
+          <div class="etape" data-etape="1">
+            <p>Il était une fois un petit garçon qui s'appelait Del.</p>
+            <button class="btn-next" data-etape-suivante="#etape-bebe-2" data-nav="etape" type="button">Lire la suite</button>
+          </div>
+          <div class="etape etape--cachee" data-etape="2" hidden id="etape-bebe-2">
+            <p>Il vivait une vie banale, sans savoir que quelqu'un, quelque part, grandissait aussi.</p>
+            <button class="btn-next" id="btn-jardin-bebe-suivant" type="button">Continuer</button>
+          </div>
         </div>
       </article>
     </div>
-    <button class="btn-next apparition" id="btn-jardin-bebe-suivant" type="button" data-delai="1">Continuer</button>
   </section>
 
-  <!-- Écran 3 — LE JARDIN : Del au micro (bouton tardif ~6 s) -->
+  <!-- Écran 3 — LE JARDIN : Del au micro (1 photo, 2 textes en 2 étapes) -->
   <section class="scene" id="ecran-jardin-micro">
     <div class="conteneur scene-intro">
       <h2 class="titre apparition" data-delai="0">Le garçon</h2>
@@ -119,12 +133,17 @@
         </div>
         <div class="bloc__texte apparition" data-delai="0.15">
           <p class="surtitre">✦ Le garçon ✦</p>
-          <p>Un garçon qui aimait rire, danser, s'amuser — et qui avait découvert l'amour du gospel, ce souffle qui porte les voix plus haut.</p>
-          <p>Mais ce soir-là, il découvrait un autre type d'amour.</p>
+          <div class="etape" data-etape="1">
+            <p>Un garçon qui aimait rire, danser, s'amuser — et qui avait découvert l'amour du gospel, ce souffle qui porte les voix plus haut.</p>
+            <button class="btn-next" data-etape-suivante="#etape-micro-2" data-nav="etape" type="button">Lire la suite</button>
+          </div>
+          <div class="etape etape--cachee" data-etape="2" hidden id="etape-micro-2">
+            <p>Mais ce soir-là, il découvrait un autre type d'amour.</p>
+            <button class="btn-next" id="btn-jardin-micro-suivant" type="button">Continuer</button>
+          </div>
         </div>
       </article>
     </div>
-    <button class="btn-next late" id="btn-jardin-micro-suivant" type="button">Continuer</button>
   </section>
 
   <!-- Écran 4 — RÉVÉLATION D'ESTHER : étoile qui bourgeonne, pétales, photo -->
@@ -133,7 +152,7 @@
       <h2 class="titre apparition" data-delai="0">Comment il la voit</h2>
     </div>
     <div class="conteneur">
-      <div aria-hidden="true" class="bloom">
+      <div class="bloom">
         <b class="stem"></b>
         <i class="petale p1"></i>
         <i class="petale p2"></i>
@@ -147,20 +166,20 @@
         <i class="petale p10"></i>
         <img alt="Esther" class="photo-esther" loading="lazy" src="assets/photos/1.jpeg"/>
       </div>
-      <p class="cap" id="s4-cap"></p>
+      <p class="cap" id="s4-cap">C'est en regardant le ciel que j'ai vu le reflet de ton visage se dessiner dans les astres.</p>
       <div class="duo-photos">
         <img alt="Esther" class="photo-duo" loading="lazy" src="assets/photos/1.jpeg"/>
         <img alt="Del" class="photo-duo" loading="lazy" src="assets/photos/photo-au-micro.jpeg"/>
       </div>
     </div>
-    <button class="btn-next late" id="btn-revelation-suivant" type="button">Continuer</button>
+    <button class="btn-next" id="btn-revelation-suivant" type="button">Continuer</button>
   </section>
 
   <!-- Écran 5 — PORTES DE LA GALERIE -->
   <section class="scene" id="ecran-portes-galerie">
     <div class="conteneur scene-intro">
       <p class="surtitre apparition" data-delai="0">✦ Le musée ✦</p>
-      <h2 class="titre apparition" data-delai="0.2">Comment il la voit</h2>
+      <h2 class="titre apparition" data-delai="0.2">Les portes du musée</h2>
     </div>
     <div class="conteneur">
       <p class="texte apparition" data-delai="0.4">Voyons voir comment Del perçoit cette soi-disant Esther…</p>
@@ -172,10 +191,10 @@
     <button class="btn-next apparition" id="btn-open-gallery" type="button" data-delai="0.8">Ouvrir les portes de la galerie</button>
   </section>
 
-  <!-- Écran 6 — GALERIE DES ŒUVRES (une à la fois) -->
+  <!-- Écran 6 — GALERIE DES ŒUVRES : 5 œuvres, une à la fois -->
   <section class="scene" id="ecran-galerie">
     <div class="conteneur scene-intro">
-      <h2 class="titre apparition" data-delai="0">Le musée</h2>
+      <h2 class="titre apparition" data-delai="0">La galerie</h2>
     </div>
     <div class="conteneur oeuvres">
       <figure class="oeuvre punch on" id="oeuvre-1">
@@ -188,7 +207,7 @@
         </figcaption>
       </figure>
       <figure class="oeuvre punch" id="oeuvre-2">
-        <div class="oeuvre__cadre frame shot-canvas" data-texte="Et là, tout s'est arrêté. Le temps. Le monde. Mon cœur.">
+        <div class="oeuvre__cadre frame shot-canvas" data-texte="Ce regard-là, c'est celui qui a changé ma vie.">
           <img alt="Esther" loading="lazy" src="assets/photos/1.jpeg"/>
         </div>
         <figcaption>
@@ -197,7 +216,7 @@
         </figcaption>
       </figure>
       <figure class="oeuvre punch" id="oeuvre-3">
-        <div class="oeuvre__cadre frame" data-texte="Ce regard-là, c'est celui qui a changé ma vie.">
+        <div class="oeuvre__cadre frame" data-texte="Chaque seconde avec toi mérite d'être gardée précieusement.">
           <video loop="" muted="" playsinline="" preload="metadata" src="assets/videos/ax.mp4#t=0.1"></video>
         </div>
         <figcaption>
@@ -206,7 +225,7 @@
         </figcaption>
       </figure>
       <figure class="oeuvre punch" id="oeuvre-4">
-        <div class="oeuvre__cadre frame" data-texte="Chaque seconde avec toi mérite d'être gardée précieusement.">
+        <div class="oeuvre__cadre frame" data-texte="Ton sourire, c'est le soleil de mes matins.">
           <video loop="" muted="" playsinline="" preload="metadata" src="assets/videos/ab.mp4#t=0.1"></video>
         </div>
         <figcaption>
@@ -215,7 +234,7 @@
         </figcaption>
       </figure>
       <figure class="oeuvre punch" id="oeuvre-5">
-        <div class="oeuvre__cadre frame" data-texte="Ton sourire, c'est le soleil de mes matins.">
+        <div class="oeuvre__cadre frame" data-texte="Toi, ma plus belle œuvre, ma plus grande fierté.">
           <video loop="" muted="" playsinline="" preload="metadata" src="assets/videos/ac.mp4#t=0.1"></video>
         </div>
         <figcaption>
@@ -224,131 +243,140 @@
         </figcaption>
       </figure>
     </div>
-    <button class="btn-next" id="btn-next-punch" type="button">Continuer</button>
+    <div class="galerie__navigation" id="galerie-navigation">
+      <button class="btn-next btn-next--secondaire" id="btn-oeuvre-precedente" type="button" data-nav="galerie" disabled>← Précédente</button>
+      <p class="galerie__compteur" id="galerie-compteur" aria-live="polite">Œuvre 1 sur 5</p>
+      <button class="btn-next" id="btn-oeuvre-suivante" type="button" data-nav="galerie">Œuvre suivante →</button>
+    </div>
   </section>
 
-  <!-- Écran 7 — MUR DE CADRES (vignettes) -->
+  <!-- Écran 7 — MUR DE CADRES : 28 vidéos, 8 vignettes par page -->
   <section class="scene" id="ecran-mur">
     <div class="conteneur scene-intro">
-      <h2 class="titre apparition" data-delai="0">Le musée</h2>
+      <h2 class="titre apparition" data-delai="0">Le mur</h2>
     </div>
     <div class="conteneur mur">
       <p class="texte apparition">Choisis une œuvre pour la regarder de plus près.</p>
-      <div class="mur__grille">
-        <button aria-label="Voir Œuvre IV (vidéo)" class="vignette apparition" data-titre="Œuvre IV" data-video="assets/videos/ELLE.mp4" data-texte="Dans chaque geste de toi, je vois notre avenir." type="button">
+      <div class="mur__grille" id="mur-grille">
+        <button aria-label="Voir Œuvre IV (vidéo)" class="vignette" data-titre="Œuvre IV" data-video="assets/videos/ELLE.mp4" data-texte="Dans chaque geste de toi, je vois notre avenir." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/ELLE.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre V (vidéo)" class="vignette apparition" data-titre="Œuvre V" data-video="assets/videos/A.mp4" data-texte="Toi, ma plus belle œuvre, ma plus grande fierté." type="button">
+        <button aria-label="Voir Œuvre V (vidéo)" class="vignette" data-titre="Œuvre V" data-video="assets/videos/A.mp4" data-texte="Toi, ma plus belle œuvre, ma plus grande fierté." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/A.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre VI (vidéo)" class="vignette apparition" data-titre="Œuvre VI" data-video="assets/videos/B.mp4" data-texte="Un souvenir qui brille dans ma mémoire." type="button">
+        <button aria-label="Voir Œuvre VI (vidéo)" class="vignette" data-titre="Œuvre VI" data-video="assets/videos/B.mp4" data-texte="Un souvenir qui brille dans ma mémoire." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/B.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre VII (vidéo)" class="vignette apparition" data-titre="Œuvre VII" data-video="assets/videos/bb.mp4" data-texte="Chaque image de toi est une œuvre." type="button">
+        <button aria-label="Voir Œuvre VII (vidéo)" class="vignette" data-titre="Œuvre VII" data-video="assets/videos/bb.mp4" data-texte="Chaque image de toi est une œuvre." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/bb.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre VIII (vidéo)" class="vignette apparition" data-titre="Œuvre VIII" data-video="assets/videos/bc.mp4" data-texte="Le temps s'arrête quand je te regarde." type="button">
+        <button aria-label="Voir Œuvre VIII (vidéo)" class="vignette" data-titre="Œuvre VIII" data-video="assets/videos/bc.mp4" data-texte="Le temps s'arrête quand je te regarde." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/bc.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre IX (vidéo)" class="vignette apparition" data-titre="Œuvre IX" data-video="assets/videos/C.mp4" data-texte="Tu illumines tout ce que tu touches." type="button">
+        <button aria-label="Voir Œuvre IX (vidéo)" class="vignette" data-titre="Œuvre IX" data-video="assets/videos/C.mp4" data-texte="Tu illumines tout ce que tu touches." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/C.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre X (vidéo)" class="vignette apparition" data-titre="Œuvre X" data-video="assets/videos/cc.mp4" data-texte="Ces instants-là, je les chéris." type="button">
+        <button aria-label="Voir Œuvre X (vidéo)" class="vignette" data-titre="Œuvre X" data-video="assets/videos/cc.mp4" data-texte="Ces instants-là, je les chéris." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/cc.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre XI (vidéo)" class="vignette apparition" data-titre="Œuvre XI" data-video="assets/videos/D.mp4" data-texte="Mon cœur bat pour toi, encore et encore." type="button">
+        <button aria-label="Voir Œuvre XI (vidéo)" class="vignette" data-titre="Œuvre XI" data-video="assets/videos/D.mp4" data-texte="Mon cœur bat pour toi, encore et encore." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/D.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre XII (vidéo)" class="vignette apparition" data-titre="Œuvre XII" data-video="assets/videos/E.mp4" data-texte="Toi, mon éternité." type="button">
+        <button aria-label="Voir Œuvre XII (vidéo)" class="vignette" data-titre="Œuvre XII" data-video="assets/videos/E.mp4" data-texte="Toi, mon éternité." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/E.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre XIII (vidéo)" class="vignette apparition" data-titre="Œuvre XIII" data-video="assets/videos/F.mp4" data-texte="Et si c'était à refaire, je te choisirais encore." type="button">
+        <button aria-label="Voir Œuvre XIII (vidéo)" class="vignette" data-titre="Œuvre XIII" data-video="assets/videos/F.mp4" data-texte="Et si c'était à refaire, je te choisirais encore." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/F.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre XIV (vidéo)" class="vignette apparition" data-titre="Œuvre XIV" data-video="assets/videos/H.mp4" data-texte="La femme que j'aime, celle avec qui je veux vieillir." type="button">
+        <button aria-label="Voir Œuvre XIV (vidéo)" class="vignette" data-titre="Œuvre XIV" data-video="assets/videos/H.mp4" data-texte="La femme que j'aime, celle avec qui je veux vieillir." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/H.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre XV (vidéo)" class="vignette apparition" data-titre="Œuvre XV" data-video="assets/videos/I.mp4" data-texte="Et là, tout s'est arrêté. Le temps. Le monde. Mon cœur." type="button">
+        <button aria-label="Voir Œuvre XV (vidéo)" class="vignette" data-titre="Œuvre XV" data-video="assets/videos/I.mp4" data-texte="Et là, tout s'est arrêté. Le temps. Le monde. Mon cœur." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/I.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre XVI (vidéo)" class="vignette apparition" data-titre="Œuvre XVI" data-video="assets/videos/J.mp4" data-texte="Ce regard-là, c'est celui qui a changé ma vie." type="button">
+        <button aria-label="Voir Œuvre XVI (vidéo)" class="vignette" data-titre="Œuvre XVI" data-video="assets/videos/J.mp4" data-texte="Ce regard-là, c'est celui qui a changé ma vie." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/J.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre XVII (vidéo)" class="vignette apparition" data-titre="Œuvre XVII" data-video="assets/videos/K.mp4" data-texte="Chaque seconde avec toi mérite d'être gardée précieusement." type="button">
+        <button aria-label="Voir Œuvre XVII (vidéo)" class="vignette" data-titre="Œuvre XVII" data-video="assets/videos/K.mp4" data-texte="Chaque seconde avec toi mérite d'être gardée précieusement." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/K.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre XVIII (vidéo)" class="vignette apparition" data-titre="Œuvre XVIII" data-video="assets/videos/ks.mp4" data-texte="Ton sourire, c'est le soleil de mes matins." type="button">
+        <button aria-label="Voir Œuvre XVIII (vidéo)" class="vignette" data-titre="Œuvre XVIII" data-video="assets/videos/ks.mp4" data-texte="Ton sourire, c'est le soleil de mes matins." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/ks.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre XIX (vidéo)" class="vignette apparition" data-titre="Œuvre XIX" data-video="assets/videos/L.mp4" data-texte="Dans chaque geste de toi, je vois notre avenir." type="button">
+        <button aria-label="Voir Œuvre XIX (vidéo)" class="vignette" data-titre="Œuvre XIX" data-video="assets/videos/L.mp4" data-texte="Dans chaque geste de toi, je vois notre avenir." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/L.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre XX (vidéo)" class="vignette apparition" data-titre="Œuvre XX" data-video="assets/videos/M.mp4" data-texte="Toi, ma plus belle œuvre, ma plus grande fierté." type="button">
+        <button aria-label="Voir Œuvre XX (vidéo)" class="vignette" data-titre="Œuvre XX" data-video="assets/videos/M.mp4" data-texte="Toi, ma plus belle œuvre, ma plus grande fierté." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/M.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre XXI (vidéo)" class="vignette apparition" data-titre="Œuvre XXI" data-video="assets/videos/N.mp4" data-texte="Un souvenir qui brille dans ma mémoire." type="button">
+        <button aria-label="Voir Œuvre XXI (vidéo)" class="vignette" data-titre="Œuvre XXI" data-video="assets/videos/N.mp4" data-texte="Un souvenir qui brille dans ma mémoire." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/N.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre XXII (vidéo)" class="vignette apparition" data-titre="Œuvre XXII" data-video="assets/videos/O.mp4" data-texte="Chaque image de toi est une œuvre." type="button">
+        <button aria-label="Voir Œuvre XXII (vidéo)" class="vignette" data-titre="Œuvre XXII" data-video="assets/videos/O.mp4" data-texte="Chaque image de toi est une œuvre." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/O.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre XXIII (vidéo)" class="vignette apparition" data-titre="Œuvre XXIII" data-video="assets/videos/P.mp4" data-texte="Le temps s'arrête quand je te regarde." type="button">
+        <button aria-label="Voir Œuvre XXIII (vidéo)" class="vignette" data-titre="Œuvre XXIII" data-video="assets/videos/P.mp4" data-texte="Le temps s'arrête quand je te regarde." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/P.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre XXIV (vidéo)" class="vignette apparition" data-titre="Œuvre XXIV" data-video="assets/videos/Q.mp4" data-texte="Tu illumines tout ce que tu touches." type="button">
+        <button aria-label="Voir Œuvre XXIV (vidéo)" class="vignette" data-titre="Œuvre XXIV" data-video="assets/videos/Q.mp4" data-texte="Tu illumines tout ce que tu touches." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/Q.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre XXV (vidéo)" class="vignette apparition" data-titre="Œuvre XXV" data-video="assets/videos/R.mp4" data-texte="Ces instants-là, je les chéris." type="button">
+        <button aria-label="Voir Œuvre XXV (vidéo)" class="vignette" data-titre="Œuvre XXV" data-video="assets/videos/R.mp4" data-texte="Ces instants-là, je les chéris." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/R.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre XXVI (vidéo)" class="vignette apparition" data-titre="Œuvre XXVI" data-video="assets/videos/S.mp4" data-texte="Mon cœur bat pour toi, encore et encore." type="button">
+        <button aria-label="Voir Œuvre XXVI (vidéo)" class="vignette" data-titre="Œuvre XXVI" data-video="assets/videos/S.mp4" data-texte="Mon cœur bat pour toi, encore et encore." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/S.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre XXVII (vidéo)" class="vignette apparition" data-titre="Œuvre XXVII" data-video="assets/videos/T.mp4" data-texte="Toi, mon éternité." type="button">
+        <button aria-label="Voir Œuvre XXVII (vidéo)" class="vignette" data-titre="Œuvre XXVII" data-video="assets/videos/T.mp4" data-texte="Toi, mon éternité." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/T.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre XXVIII (vidéo)" class="vignette apparition" data-titre="Œuvre XXVIII" data-video="assets/videos/U.mp4" data-texte="Et si c'était à refaire, je te choisirais encore." type="button">
+        <button aria-label="Voir Œuvre XXVIII (vidéo)" class="vignette" data-titre="Œuvre XXVIII" data-video="assets/videos/U.mp4" data-texte="Et si c'était à refaire, je te choisirais encore." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/U.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre XXIX (vidéo)" class="vignette apparition" data-titre="Œuvre XXIX" data-video="assets/videos/V.mp4" data-texte="La femme que j'aime, celle avec qui je veux vieillir." type="button">
+        <button aria-label="Voir Œuvre XXIX (vidéo)" class="vignette" data-titre="Œuvre XXIX" data-video="assets/videos/V.mp4" data-texte="La femme que j'aime, celle avec qui je veux vieillir." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/V.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre XXX (vidéo)" class="vignette apparition" data-titre="Œuvre XXX" data-video="assets/videos/Y.mp4" data-texte="Et là, tout s'est arrêté. Le temps. Le monde. Mon cœur." type="button">
+        <button aria-label="Voir Œuvre XXX (vidéo)" class="vignette" data-titre="Œuvre XXX" data-video="assets/videos/Y.mp4" data-texte="Et là, tout s'est arrêté. Le temps. Le monde. Mon cœur." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/Y.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
-        <button aria-label="Voir Œuvre XXXI (vidéo)" class="vignette apparition" data-titre="Œuvre XXXI" data-video="assets/videos/Z.mp4" data-texte="Ce regard-là, c'est celui qui a changé ma vie." type="button">
+        <button aria-label="Voir Œuvre XXXI (vidéo)" class="vignette" data-titre="Œuvre XXXI" data-video="assets/videos/Z.mp4" data-texte="Ce regard-là, c'est celui qui a changé ma vie." type="button">
           <img alt="" height="640" loading="lazy" src="assets/posters/Z.jpg" width="360"/>
           <span aria-hidden="true" class="vignette__play">▶</span>
         </button>
       </div>
-      <button class="btn-next" id="btn-mur-suivant" type="button">Continuer</button>
+      <div class="mur__pagination" id="mur-pagination">
+        <button class="btn-next btn-next--secondaire" id="btn-mur-page-precedente" type="button" data-nav="mur" disabled>← Page précédente</button>
+        <p class="mur__compteur" id="mur-compteur" aria-live="polite">Page 1 sur 4</p>
+        <button class="btn-next" id="btn-mur-page-suivante" type="button" data-nav="mur">Page suivante →</button>
+      </div>
+      <button class="btn-next" id="btn-mur-continuer" type="button">Continuer vers la fin</button>
     </div>
   </section>
 
@@ -371,28 +399,36 @@
       </figure>
     </div>
     <div class="conteneur">
-      <!-- Message final : un <p data-machine> par ligne, écrit lettre par lettre. -->
-      <div class="message-final" id="message-final">
-        <p class="message-final__ligne" data-machine><span class="message-final__plein">Si chaque rencontre était un tableau, celle-là serait la seule accrochée à la lumière.</span><span aria-hidden="true" class="message-final__frappe"></span></p>
-      </div>
-      <p class="signature">— Del</p>
+      <!-- La finale n'a pas de texte : le message complet est dans la lettre,
+           écran 9. Le conteneur vide permet à message.js d'afficher le bouton. -->
+      <div class="message-final" id="message-final" hidden></div>
+      <button class="btn-next action-differee" id="btn-finale-suivant" type="button">Continuer</button>
     </div>
   </section>
 
-  <!-- Écran 9 — LETTRE "UN MOT POUR TOI" -->
+  <!-- Écran 9 — LETTRE "UN MOT POUR TOI" : 3 paragraphes, 3 étapes -->
   <section class="scene" id="ecran-lettre">
     <div class="conteneur scene-intro">
       <h2 class="titre apparition" data-delai="0">✦ UN MOT POUR TOI ✦</h2>
     </div>
     <div class="conteneur">
-      <!-- Lettre : un <p data-machine> par paragraphe, écrit lettre par lettre. -->
+      <!-- Lettre : le message complet, un paragraphe à la fois,
+           avec une action après chacun. -->
       <div class="message-final" id="message-lettre">
-        <p class="message-final__ligne" data-machine><span class="message-final__plein">Mon amour, je ne veux pas seulement être ton copain aujourd'hui, je veux être ton mari demain, ton compagnon pour la vie et celui avec qui tu vieilliras. 💍</span><span aria-hidden="true" class="message-final__frappe"></span></p>
-        <p class="message-final__ligne" data-machine><span class="message-final__plein">Je ne suis pas venu dans ta vie pour chercher une autre femme, mais pour construire mon avenir avec toi. Je ne suis pas parfait, mais je te promets de faire de mon mieux pour rester sincère, fidèle et protéger notre amour.</span><span aria-hidden="true" class="message-final__frappe"></span></p>
-        <p class="message-final__ligne" data-machine><span class="message-final__plein">Et si Dieu nous le permet, c'est avec toi que je veux fonder une famille et passer le reste de ma vie. 🥹❤️🔐</span><span aria-hidden="true" class="message-final__frappe"></span></p>
+        <div class="lettre__etape" data-etape-lettre="1" id="lettre-etape-1">
+          <p class="message-final__ligne" data-machine><span class="message-final__plein">Mon amour, je ne veux pas seulement être ton copain aujourd'hui, je veux être ton mari demain, ton compagnon pour la vie et celui avec qui tu vieilliras. 💍</span><span aria-hidden="true" class="message-final__frappe"></span></p>
+          <button class="btn-next" id="btn-lettre-etape-2" type="button" data-nav="lettre">Continuer</button>
+        </div>
+        <div class="lettre__etape lettre__etape--cachee" data-etape-lettre="2" hidden id="lettre-etape-2">
+          <p class="message-final__ligne" data-machine><span class="message-final__plein">Je ne suis pas venu dans ta vie pour chercher une autre femme, mais pour construire mon avenir avec toi. Je ne suis pas parfait, mais je te promets de faire de mon mieux pour rester sincère, fidèle et protéger notre amour.</span><span aria-hidden="true" class="message-final__frappe"></span></p>
+          <button class="btn-next" id="btn-lettre-etape-3" type="button" data-nav="lettre">Continuer</button>
+        </div>
+        <div class="lettre__etape lettre__etape--cachee" data-etape-lettre="3" hidden id="lettre-etape-3">
+          <p class="message-final__ligne" data-machine><span class="message-final__plein">Et si Dieu nous le permet, c'est avec toi que je veux fonder une famille et passer le reste de ma vie. 🥹❤️🔐</span><span aria-hidden="true" class="message-final__frappe"></span></p>
+          <p class="signature signature--attente">— Del</p>
+          <button class="btn-next" id="btn-relire-epopee" type="button" data-nav="lettre">Relire l'Épopée</button>
+        </div>
       </div>
-      <p class="signature">— Del</p>
-      <button class="btn-next" id="btn-relire-epopee" type="button" data-delai="1">Relire l'Épopée</button>
     </div>
   </section>
 
@@ -410,9 +446,13 @@
 
 <!-- GSAP : chorégraphie des ouvertures (le site reste fonctionnel sans lui) -->
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" crossorigin="anonymous"></script>
+<!-- ScrollTrigger : animations liées au défilement (plugin GSAP) -->
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" crossorigin="anonymous"></script>
 <!-- Garde-fou file:// : s'exécute AVANT les modules pour expliquer qu'un
      serveur local est requis (les modules ES6 sont bloqués en double-clic) -->
 <script defer src="js/garde.js"></script>
+<!-- Lenis : défilement fluide et cinématique (désactivé si réduit-motion) -->
+<script async src="https://cdn.jsdelivr.net/npm/lenis@1.1.16/dist/lenis.min.js"></script>
 <script src="js/main.js" type="module"></script>
 </body>
 </html>

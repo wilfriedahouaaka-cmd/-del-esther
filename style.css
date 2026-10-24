@@ -1183,3 +1183,168 @@ body:has(dialog[open]) { overflow: hidden; }
   display: block;
   pointer-events: auto;
 }
+
+/* ============================================================
+   CORRECTIF RESPONSIVE — centrage vertical sûr
+   Une scène dont le contenu dépasse la hauteur de l'écran doit
+   commencer en haut et rester entièrement accessible au défilement.
+   `safe center` centre quand le contenu tient, et bascule en haut
+   quand il déborde (au lieu de couper le début du contenu).
+   ============================================================ */
+.scene { justify-content: safe center; }
+
+/* Téléphones de 641 à 720 px de haut (ex. 375x667) : l'arche est
+   légèrement réduite pour que « Ouvre la porte » reste entièrement
+   visible sans avoir à faire défiler. */
+@media (min-height: 641px) and (max-height: 720px) {
+  .scene--portail { gap: var(--sp-2); }
+  .arche { height: clamp(230px, 42svh, 320px); }
+}
+
+/* Photos de la révélation rendues cliquables par la visionneuse :
+   même curseur que les autres œuvres agrandissables. */
+.bloom .photo-esther[role="button"],
+.duo-photos .photo-duo[role="button"] { cursor: zoom-in; }
+
+/* Les décors de la fleur (halo, tige, pétales) ne doivent jamais
+   intercepter le clic destiné à la photo d'Esther. */
+.bloom::before,
+.bloom .stem,
+.bloom .petale { pointer-events: none; }
+
+/* Le portail est visible dès le premier rendu, même si le module ES6 ou
+   les scripts GSAP tardent à se charger : l'expérience ne commence jamais
+   sur un écran vide. Les apparitions du portail sont de toute façon
+   forcées visibles par reveal.js une fois le module exécuté. */
+#ecran-portail .apparition {
+  opacity: 1;
+  transform: none;
+  filter: blur(0);
+}
+
+/* ============================================================
+   CONTENU PROGRESSIF — étapes, galerie, mur paginé, lettre
+   ============================================================ */
+
+/* L'attribut hidden doit toujours gagner, même sur un bouton dont la
+   classe impose display: inline-flex. */
+[hidden] {
+  display: none !important;
+}
+
+/* Un texte peut être révélé en plusieurs temps. Le texte déjà lu reste
+   visible ; seule la suite apparaît, avec une petite transition. */
+.etape--cachee,
+.lettre__etape--cachee {
+  display: none !important;
+}
+
+.etape--apparue,
+.lettre__etape--visible {
+  animation: etape-apparait 0.7s var(--ease-doux);
+}
+
+@keyframes etape-apparait {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* L'action reste collée au texte qu'elle concerne. */
+.etape .btn-next,
+.lettre__etape .btn-next {
+  margin-top: var(--sp-2);
+}
+
+/* Navigation de la galerie et pagination du mur */
+.galerie__navigation,
+.mur__pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-2);
+  margin-top: var(--sp-4);
+}
+
+.galerie__navigation .btn-next,
+.mur__pagination .btn-next {
+  margin-top: 0;
+}
+
+.galerie__compteur,
+.mur__compteur {
+  margin: 0;
+  min-width: 9rem;
+  font-family: var(--f-titre);
+  font-size: var(--fs-petit);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--or-clair);
+}
+
+/* Bouton secondaire : même forme, moins de poids visuel. */
+.btn-next--secondaire {
+  min-width: 0;
+  padding: 0.7em 1.4em;
+  background: transparent;
+  border-color: rgba(229, 184, 66, 0.55);
+  box-shadow: none;
+}
+
+.btn-next:disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* Le bouton de la finale n'apparaît qu'une fois le message écrit.
+   visibility: hidden le retire aussi du parcours clavier. */
+.action-differee {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.action-differee.visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Mur : les vignettes de la page courante apparaissent en cascade.
+   Les pages suivantes restent hors du flux tant qu'elles sont cachées. */
+.vignette {
+  transition: opacity 0.6s var(--ease-doux), transform 0.6s var(--ease-doux);
+}
+
+.vignette--attente {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+.vignette--visible {
+  opacity: 1;
+  transform: none;
+}
+
+.vignette[hidden] {
+  display: none !important;
+}
+
+/* Sur téléphone, les commandes passent l'une sous l'autre pour rester
+   faciles à toucher, avec le compteur au-dessus. */
+@media (max-width: 640px) {
+  .galerie__navigation,
+  .mur__pagination {
+    flex-direction: column;
+  }
+
+  .galerie__compteur,
+  .mur__compteur {
+    order: -1;
+  }
+
+  .galerie__navigation .btn-next,
+  .mur__pagination .btn-next {
+    width: 100%;
+  }
+}
